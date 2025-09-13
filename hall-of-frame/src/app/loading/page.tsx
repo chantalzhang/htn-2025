@@ -52,8 +52,15 @@ export default function LoadingPage() {
   const IconComponent = currentMessage.icon;
 
   return (
-    <div className="min-h-screen bg-dark-bg flex items-center justify-center px-4">
-      <div className="max-w-2xl mx-auto text-center">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Bold Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-radial from-neon-blue/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-radial from-neon-pink/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-radial from-neon-green/15 to-transparent rounded-full blur-2xl"></div>
+      </div>
+      
+      <div className="max-w-2xl mx-auto text-center relative z-10">
         {/* Main Loading Animation */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -94,7 +101,11 @@ export default function LoadingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl md:text-5xl font-bebas gradient-text mb-4"
+            className="text-5xl md:text-6xl font-oswald gradient-text mb-6 font-black"
+            style={{ 
+              textShadow: '0 0 30px rgba(0, 212, 255, 0.5), 0 0 60px rgba(255, 0, 128, 0.3)',
+              letterSpacing: '0.05em'
+            }}
           >
             ANALYZING YOUR FRAME
           </motion.h1>
@@ -103,7 +114,7 @@ export default function LoadingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl text-gray-400 mb-8"
+            className="text-2xl text-text-secondary mb-10 font-oswald font-semibold"
           >
             Finding your perfect athletic match...
           </motion.p>
@@ -124,7 +135,7 @@ export default function LoadingPage() {
               transition={{ duration: 0.1 }}
             />
           </div>
-          <div className="flex justify-between text-sm text-gray-400">
+          <div className="flex justify-between text-sm text-gray-400 font-oswald">
             <span>Processing...</span>
             <span>{Math.round(progress)}%</span>
           </div>
@@ -145,7 +156,7 @@ export default function LoadingPage() {
           >
             <IconComponent className="text-neon-blue" size={24} />
           </motion.div>
-          <span className="text-lg font-montserrat text-white">
+          <span className="text-lg font-oswald text-white">
             {currentMessage.text}
           </span>
         </motion.div>
@@ -158,32 +169,32 @@ export default function LoadingPage() {
           className="grid grid-cols-2 md:grid-cols-4 gap-4"
         >
           <motion.div
-            className="card p-4 text-center"
-            whileHover={{ scale: 1.05 }}
+            className="card p-6 text-center"
+            whileHover={{ scale: 1.1, y: -5 }}
           >
-            <div className="text-2xl font-bebas text-neon-blue mb-1">50+</div>
-            <div className="text-xs text-gray-400">Athletes</div>
+            <div className="text-2xl font-oswald text-neon-blue mb-1">50+</div>
+            <div className="text-xs text-gray-400 font-oswald">Athletes</div>
           </motion.div>
           <motion.div
-            className="card p-4 text-center"
-            whileHover={{ scale: 1.05 }}
+            className="card p-6 text-center"
+            whileHover={{ scale: 1.1, y: -5 }}
           >
-            <div className="text-2xl font-bebas text-neon-green mb-1">8</div>
-            <div className="text-xs text-gray-400">Sports</div>
+            <div className="text-2xl font-oswald text-neon-green mb-1">8</div>
+            <div className="text-xs text-gray-400 font-oswald">Sports</div>
           </motion.div>
           <motion.div
-            className="card p-4 text-center"
-            whileHover={{ scale: 1.05 }}
+            className="card p-6 text-center"
+            whileHover={{ scale: 1.1, y: -5 }}
           >
-            <div className="text-2xl font-bebas text-neon-gold mb-1">6</div>
-            <div className="text-xs text-gray-400">Measurements</div>
+            <div className="text-2xl font-oswald text-neon-gold mb-1">6</div>
+            <div className="text-xs text-gray-400 font-oswald">Measurements</div>
           </motion.div>
           <motion.div
-            className="card p-4 text-center"
-            whileHover={{ scale: 1.05 }}
+            className="card p-6 text-center"
+            whileHover={{ scale: 1.1, y: -5 }}
           >
-            <div className="text-2xl font-bebas text-neon-blue mb-1">95%</div>
-            <div className="text-xs text-gray-400">Accuracy</div>
+            <div className="text-2xl font-oswald text-neon-blue mb-1">95%</div>
+            <div className="text-xs text-gray-400 font-oswald">Accuracy</div>
           </motion.div>
         </motion.div>
 
