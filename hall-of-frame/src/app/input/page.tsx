@@ -19,6 +19,7 @@ export default function InputPage() {
     hip: 0
   });
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
+  const [activeField, setActiveField] = useState<keyof BodyMeasurements | null>(null);
 
   const handleMeasurementChange = (key: keyof BodyMeasurements, value: number) => {
     const numericValue = Number(value);
@@ -75,6 +76,14 @@ export default function InputPage() {
   const handleClearPhoto = () => {
     localStorage.removeItem('userPhoto');
     setUserPhoto(null);
+  };
+
+  const handleFieldFocus = (field: keyof BodyMeasurements) => {
+    setActiveField(field);
+  };
+
+  const handleFieldBlur = () => {
+    setActiveField(null);
   };
 
   const isFormValid = (
@@ -180,13 +189,14 @@ export default function InputPage() {
                 Interactive Body Map
               </h2>
               <p className="text-text-secondary text-lg font-oswald">
-                Click on different body parts to enter your measurements
+                Focus on input fields to see which body parts to measure
               </p>
             </div>
             
             <BodySilhouette
               measurements={measurements}
               onMeasurementChange={handleMeasurementChange}
+              activeField={activeField}
             />
           </motion.div>
 
@@ -218,6 +228,8 @@ export default function InputPage() {
                     type="number"
                     value={measurements.height || ''}
                     onChange={(e) => handleMeasurementChange('height', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('height')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your height"
                   />
@@ -235,6 +247,8 @@ export default function InputPage() {
                     type="number"
                     value={measurements.weight || ''}
                     onChange={(e) => handleMeasurementChange('weight', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('weight')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your weight"
                   />
@@ -252,6 +266,8 @@ export default function InputPage() {
                     type="number"
                     value={measurements.wingspan || ''}
                     onChange={(e) => handleMeasurementChange('wingspan', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('wingspan')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your wingspan"
                   />
@@ -269,6 +285,8 @@ export default function InputPage() {
                     type="number"
                     value={measurements.shoulderWidth || ''}
                     onChange={(e) => handleMeasurementChange('shoulderWidth', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('shoulderWidth')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your shoulder width"
                   />
@@ -286,6 +304,8 @@ export default function InputPage() {
                     type="number"
                     value={measurements.waist || ''}
                     onChange={(e) => handleMeasurementChange('waist', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('waist')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your waist measurement"
                   />
@@ -303,6 +323,8 @@ export default function InputPage() {
                     type="number"
                     value={measurements.hip || ''}
                     onChange={(e) => handleMeasurementChange('hip', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('hip')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your hip measurement"
                   />
