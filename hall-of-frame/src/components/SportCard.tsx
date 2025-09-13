@@ -20,7 +20,7 @@ export default function SportCard({ sport, index }: SportCardProps) {
     >
       {/* Score Badge */}
       <div className="absolute top-4 right-4">
-        <div className="bg-gradient-to-r from-neon-gold to-neon-blue text-dark-bg px-3 py-1 rounded-full text-sm font-bold">
+        <div className="bg-gradient-to-r from-red-500 to-neon-blue text-dark-bg px-3 py-1 rounded-full text-sm font-bold">
           {Math.round(sport.score)}% Match
         </div>
       </div>
@@ -70,9 +70,9 @@ export default function SportCard({ sport, index }: SportCardProps) {
           <span>Compatibility</span>
           <span>{Math.round(sport.score)}%</span>
         </div>
-        <div className="w-full bg-gray-700 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2">
           <motion.div
-            className="bg-gradient-to-r from-neon-gold to-neon-blue h-2 rounded-full"
+            className="bg-blue-500 from-gold to-blue h-2 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${sport.score}%` }}
             transition={{ duration: 1, delay: index * 0.2 + 0.5 }}
