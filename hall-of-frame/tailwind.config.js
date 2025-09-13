@@ -8,17 +8,31 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'neon-blue': '#00f5ff',
-        'neon-green': '#39ff14',
-        'neon-gold': '#ffd700',
-        'dark-bg': '#0a0a0a',
-        'dark-card': '#1a1a1a',
+        // Bold OpenAI-inspired color palette
+        'primary-blue': '#1e40af', // Deep royal blue
+        'accent-blue': '#3b82f6', // Bright blue
+        'neon-blue': '#00d4ff', // Electric cyan
+        'primary-pink': '#ec4899', // Vibrant pink
+        'accent-pink': '#f472b6', // Light pink
+        'neon-pink': '#ff0080', // Hot pink
+        'primary-green': '#10b981', // Emerald green
+        'accent-green': '#34d399', // Light green
+        'neon-green': '#00ff88', // Electric green
+        'primary-orange': '#f97316', // Orange
+        'accent-orange': '#fb923c', // Light orange
+        'neon-orange': '#ff6b35', // Bright orange
+        'dark-bg': '#0c0c0c', // Deep black
+        'dark-card': '#1a1a1a', // Card background
+        'text-primary': '#ffffff', // Pure white
+        'text-secondary': '#e5e7eb', // Light gray
+        'text-muted': '#9ca3af', // Muted gray
       },
       fontFamily: {
         'bebas': ['Bebas Neue', 'cursive'],
         'montserrat': ['Montserrat', 'sans-serif'],
         'inter': ['Inter', 'sans-serif'],
         'poppins': ['Poppins', 'sans-serif'],
+        'oswald': ['Oswald', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

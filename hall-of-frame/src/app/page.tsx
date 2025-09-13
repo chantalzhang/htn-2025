@@ -8,11 +8,20 @@ export default function LandingPage() {
   const router = useRouter();
 
   const handleGetStarted = () => {
-    router.push('/input');
+    router.push('/photo');
   };
 
   return (
-    <div className="min-h-screen bg-dark-bg relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Bold Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Geometric shapes inspired by OpenAI design */}
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary-blue/10 via-transparent to-neon-pink/10"></div>
+        <div className="absolute top-1/4 right-0 w-96 h-96 bg-gradient-radial from-neon-blue/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-gradient-radial from-neon-pink/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-radial from-neon-green/15 to-transparent rounded-full blur-2xl"></div>
+      </div>
+
       {/* Hero Section */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
         <motion.div
@@ -26,7 +35,11 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="text-6xl md:text-8xl font-bebas mb-6 gradient-text"
+            className="text-7xl md:text-9xl font-oswald mb-8 gradient-text leading-none"
+            style={{ 
+              textShadow: '0 0 40px rgba(0, 212, 255, 0.5), 0 0 80px rgba(255, 0, 128, 0.3)',
+              letterSpacing: '0.05em'
+            }}
           >
             HALL OF FRAME
           </motion.h1>
@@ -36,7 +49,8 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl font-montserrat text-gray-300 mb-8 max-w-2xl mx-auto"
+            className="text-2xl md:text-3xl font-oswald font-bold text-white mb-8 max-w-3xl mx-auto"
+            style={{ textShadow: '0 0 20px rgba(255, 255, 255, 0.3)' }}
           >
             Does your frame belong in the Hall of Fame?
           </motion.p>
@@ -46,7 +60,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg md:text-xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl text-text-secondary mb-16 max-w-4xl mx-auto leading-relaxed font-oswald font-medium"
           >
             Discover which sport you're best suited for by comparing your body measurements 
             against elite athletes from around the world. Find your perfect athletic match!
@@ -57,12 +71,16 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.1, y: -5 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleGetStarted}
-            className="btn-primary text-2xl px-12 py-4 neon-glow-blue hover:neon-glow-green transition-all duration-300"
+            className="btn-primary text-3xl px-16 py-6 neon-glow-blue hover:neon-glow-pink transition-all duration-500 font-oswald font-black"
+            style={{ 
+              background: 'linear-gradient(135deg, #1e40af, #3b82f6, #00d4ff)',
+              boxShadow: '0 0 30px rgba(0, 212, 255, 0.4), 0 0 60px rgba(0, 212, 255, 0.2)'
+            }}
           >
-            <Trophy className="inline-block mr-3" size={32} />
+            <Trophy className="inline-block mr-4" size={40} />
             Find Your Sport
           </motion.button>
         </motion.div>
@@ -72,43 +90,43 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1 }}
-          className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-10 max-w-7xl mx-auto"
         >
           <motion.div
-            whileHover={{ scale: 1.05, y: -10 }}
-            className="card card-hover text-center p-8"
+            whileHover={{ scale: 1.08, y: -15 }}
+            className="card-blue text-center p-10"
           >
-            <Target className="mx-auto mb-4 text-neon-blue" size={48} />
-            <h3 className="text-xl font-montserrat font-bold mb-3 text-neon-blue">
+            <Target className="mx-auto mb-6 text-neon-blue" size={64} />
+            <h3 className="text-2xl font-oswald font-black mb-4 gradient-text-blue">
               Precise Analysis
             </h3>
-            <p className="text-gray-400">
+            <p className="text-text-secondary text-lg leading-relaxed">
               Compare your measurements against thousands of elite athletes to find your perfect match
             </p>
           </motion.div>
 
           <motion.div
-            whileHover={{ scale: 1.05, y: -10 }}
-            className="card card-hover text-center p-8"
+            whileHover={{ scale: 1.08, y: -15 }}
+            className="card-pink text-center p-10"
           >
-            <Zap className="mx-auto mb-4 text-neon-green" size={48} />
-            <h3 className="text-xl font-montserrat font-bold mb-3 text-neon-green">
+            <Zap className="mx-auto mb-6 text-neon-pink" size={64} />
+            <h3 className="text-2xl font-oswald font-black mb-4 gradient-text-pink">
               Instant Results
             </h3>
-            <p className="text-gray-400">
+            <p className="text-text-secondary text-lg leading-relaxed">
               Get your personalized sport recommendations and athlete matches in seconds
             </p>
           </motion.div>
 
           <motion.div
-            whileHover={{ scale: 1.05, y: -10 }}
-            className="card card-hover text-center p-8"
+            whileHover={{ scale: 1.08, y: -15 }}
+            className="card-green text-center p-10"
           >
-            <Users className="mx-auto mb-4 text-neon-gold" size={48} />
-            <h3 className="text-xl font-montserrat font-bold mb-3 text-neon-gold">
+            <Users className="mx-auto mb-6 text-neon-green" size={64} />
+            <h3 className="text-2xl font-oswald font-black mb-4 text-neon-green">
               Elite Database
             </h3>
-            <p className="text-gray-400">
+            <p className="text-text-secondary text-lg leading-relaxed">
               Access comprehensive data from world-class athletes across all major sports
             </p>
           </motion.div>
@@ -119,76 +137,92 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.2 }}
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
+          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-12 max-w-6xl mx-auto"
         >
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bebas text-neon-blue mb-2">50+</div>
-            <div className="text-gray-400">Elite Athletes</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bebas text-neon-green mb-2">8</div>
-            <div className="text-gray-400">Sports Analyzed</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bebas text-neon-gold mb-2">6</div>
-            <div className="text-gray-400">Body Measurements</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bebas text-neon-blue mb-2">95%</div>
-            <div className="text-gray-400">Accuracy Rate</div>
-          </div>
+          <motion.div 
+            whileHover={{ scale: 1.1, y: -10 }}
+            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-blue/20 to-neon-blue/10 border border-neon-blue/30"
+          >
+            <div className="text-4xl md:text-5xl font-oswald text-neon-blue mb-3 font-black">50+</div>
+            <div className="text-text-secondary font-oswald font-semibold text-lg">Elite Athletes</div>
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.1, y: -10 }}
+            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-green/20 to-neon-green/10 border border-neon-green/30"
+          >
+            <div className="text-4xl md:text-5xl font-oswald text-neon-green mb-3 font-black">8</div>
+            <div className="text-text-secondary font-oswald font-semibold text-lg">Sports Analyzed</div>
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.1, y: -10 }}
+            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-pink/20 to-neon-pink/10 border border-neon-pink/30"
+          >
+            <div className="text-4xl md:text-5xl font-oswald text-neon-pink mb-3 font-black">6</div>
+            <div className="text-text-secondary font-oswald font-semibold text-lg">Body Measurements</div>
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.1, y: -10 }}
+            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-orange/20 to-neon-orange/10 border border-neon-orange/30"
+          >
+            <div className="text-4xl md:text-5xl font-oswald text-neon-orange mb-3 font-black">95%</div>
+            <div className="text-text-secondary font-oswald font-semibold text-lg">Accuracy Rate</div>
+          </motion.div>
         </motion.div>
       </div>
 
-      {/* Animated Background Elements */}
+      {/* Bold Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           animate={{
             rotate: 360,
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute top-1/4 left-1/4 w-32 h-32 border border-neon-blue/20 rounded-full"
-        />
-        <motion.div
-          animate={{
-            rotate: -360,
-            scale: [1.2, 1, 1.2],
+            scale: [1, 1.3, 1],
           }}
           transition={{
             duration: 25,
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute top-3/4 right-1/4 w-24 h-24 border border-neon-green/20 rounded-full"
+          className="absolute top-1/4 left-1/4 w-40 h-40 border-2 border-neon-blue/30 rounded-full"
+          style={{ boxShadow: '0 0 40px rgba(0, 212, 255, 0.2)' }}
         />
         <motion.div
           animate={{
-            y: [-20, 20, -20],
-            x: [-10, 10, -10],
+            rotate: -360,
+            scale: [1.3, 1, 1.3],
           }}
           transition={{
-            duration: 8,
+            duration: 30,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "linear"
           }}
-          className="absolute top-1/2 right-1/3 w-16 h-16 bg-neon-gold/10 rounded-full"
+          className="absolute top-3/4 right-1/4 w-32 h-32 border-2 border-neon-pink/30 rounded-full"
+          style={{ boxShadow: '0 0 40px rgba(255, 0, 128, 0.2)' }}
         />
         <motion.div
           animate={{
-            y: [20, -20, 20],
-            x: [10, -10, 10],
+            y: [-30, 30, -30],
+            x: [-15, 15, -15],
           }}
           transition={{
-            duration: 10,
+            duration: 12,
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="absolute bottom-1/4 left-1/3 w-20 h-20 bg-neon-blue/10 rounded-full"
+          className="absolute top-1/2 right-1/3 w-20 h-20 bg-gradient-to-br from-neon-green/20 to-neon-green/5 rounded-full"
+          style={{ boxShadow: '0 0 30px rgba(0, 255, 136, 0.3)' }}
+        />
+        <motion.div
+          animate={{
+            y: [30, -30, 30],
+            x: [15, -15, 15],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute bottom-1/4 left-1/3 w-24 h-24 bg-gradient-to-br from-neon-orange/20 to-neon-orange/5 rounded-full"
+          style={{ boxShadow: '0 0 30px rgba(255, 107, 53, 0.3)' }}
         />
       </div>
     </div>

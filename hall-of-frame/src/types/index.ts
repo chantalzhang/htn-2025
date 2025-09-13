@@ -37,11 +37,23 @@ export interface AthleteMatch {
   matchingTraits: string[];
 }
 
+export interface AthleticStats {
+  strength: number;
+  agility: number;
+  endurance: number;
+  power: number;
+  speed: number;
+  flexibility: number;
+  coordination: number;
+  balance: number;
+}
+
 export interface UserResults {
   topSports: SportRecommendation[];
   topAthletes: AthleteMatch[];
   userMeasurements: BodyMeasurements;
   analysis: string;
+  athleticStats: AthleticStats;
 }
 
 export interface BodyPart {

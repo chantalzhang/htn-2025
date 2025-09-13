@@ -267,6 +267,112 @@ export function recommendSports(user: BodyMeasurements): SportRecommendation[] {
   return recommendations.sort((a, b) => b.score - a.score).slice(0, 3);
 }
 
+export function calculateAthleticStats(user: BodyMeasurements, topAthletes: AthleteMatch[]): {
+  strength: number;
+  agility: number;
+  endurance: number;
+  power: number;
+  speed: number;
+  flexibility: number;
+  coordination: number;
+  balance: number;
+} {
+  // Base calculations from measurements
+  const height = user.height;
+  const weight = user.weight;
+  const wingspan = user.wingspan;
+  const shoulderWidth = user.shoulderWidth || 0;
+  
+  // Calculate BMI for context
+  const bmi = weight / Math.pow(height / 100, 2);
+  
+  // Strength calculation (based on weight, height, and shoulder width)
+  const strength = Math.min(100, Math.max(20, 
+    (weight * 0.4) + 
+    (height * 0.2) + 
+    (shoulderWidth * 0.3) + 
+    (bmi > 20 && bmi < 30 ? 20 : 0)
+  ));
+  
+  // Agility calculation (inversely related to weight, height helps up to a point)
+  const agility = Math.min(100, Math.max(20,
+    100 - (weight * 0.3) + 
+    (height < 180 ? 20 : height < 190 ? 10 : 0) +
+    (bmi < 25 ? 15 : 0)
+  ));
+  
+  // Endurance calculation (lighter weight, moderate height)
+  const endurance = Math.min(100, Math.max(20,
+    100 - (weight * 0.25) + 
+    (height > 170 && height < 185 ? 20 : 10) +
+    (bmi < 24 ? 20 : 0)
+  ));
+  
+  // Power calculation (weight and height combination)
+  const power = Math.min(100, Math.max(20,
+    (weight * 0.35) + 
+    (height * 0.25) + 
+    (wingspan > height ? 15 : 5)
+  ));
+  
+  // Speed calculation (lighter weight, moderate height)
+  const speed = Math.min(100, Math.max(20,
+    100 - (weight * 0.4) + 
+    (height > 175 && height < 190 ? 25 : 10) +
+    (bmi < 23 ? 20 : 0)
+  ));
+  
+  // Flexibility calculation (inversely related to weight and height)
+  const flexibility = Math.min(100, Math.max(20,
+    100 - (weight * 0.2) - 
+    (height * 0.15) + 
+    (bmi < 22 ? 25 : 0)
+  ));
+  
+  // Coordination calculation (wingspan to height ratio, moderate weight)
+  const coordination = Math.min(100, Math.max(20,
+    (wingspan / height) * 50 + 
+    (weight > 60 && weight < 90 ? 20 : 10) +
+    (height > 170 && height < 185 ? 15 : 5)
+  ));
+  
+  // Balance calculation (height and weight relationship)
+  const balance = Math.min(100, Math.max(20,
+    100 - Math.abs(height - 180) * 0.5 - 
+    Math.abs(weight - 75) * 0.3 +
+    (bmi > 18 && bmi < 25 ? 20 : 0)
+  ));
+  
+  // Adjust based on top athlete matches
+  if (topAthletes.length > 0) {
+    const avgSimilarity = topAthletes.reduce((sum, match) => sum + match.similarityScore, 0) / topAthletes.length;
+    const adjustmentFactor = avgSimilarity / 100;
+    
+    // Boost stats based on how well they match elite athletes
+    return {
+      strength: Math.min(100, strength + (adjustmentFactor * 10)),
+      agility: Math.min(100, agility + (adjustmentFactor * 8)),
+      endurance: Math.min(100, endurance + (adjustmentFactor * 6)),
+      power: Math.min(100, power + (adjustmentFactor * 12)),
+      speed: Math.min(100, speed + (adjustmentFactor * 8)),
+      flexibility: Math.min(100, flexibility + (adjustmentFactor * 5)),
+      coordination: Math.min(100, coordination + (adjustmentFactor * 10)),
+      balance: Math.min(100, balance + (adjustmentFactor * 7))
+    };
+  }
+  
+  return {
+    strength: Math.round(strength),
+    agility: Math.round(agility),
+    endurance: Math.round(endurance),
+    power: Math.round(power),
+    speed: Math.round(speed),
+    flexibility: Math.round(flexibility),
+    coordination: Math.round(coordination),
+    balance: Math.round(balance)
+  };
+}
+
 export function generateAnalysis(user: BodyMeasurements, topAthletes: AthleteMatch[], topSports: SportRecommendation[]): string {
   const avgHeight = topAthletes.reduce((sum, match) => sum + match.athlete.height, 0) / topAthletes.length;
   const avgWeight = topAthletes.reduce((sum, match) => sum + match.athlete.weight, 0) / topAthletes.length;
