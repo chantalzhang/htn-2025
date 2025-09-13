@@ -23,7 +23,7 @@ export default function LandingPage() {
       </div>
 
       {/* Hero Section */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center p-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -133,41 +133,7 @@ export default function LandingPage() {
         </motion.div>
 
         {/* Stats Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
-          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-12 max-w-6xl mx-auto"
-        >
-          <motion.div 
-            whileHover={{ scale: 1.1, y: -10 }}
-            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-blue/20 to-neon-blue/10 border border-neon-blue/30"
-          >
-            <div className="text-4xl md:text-5xl font-oswald text-neon-blue mb-3 font-black">50+</div>
-            <div className="text-text-secondary font-oswald font-semibold text-lg">Elite Athletes</div>
-          </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.1, y: -10 }}
-            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-green/20 to-neon-green/10 border border-neon-green/30"
-          >
-            <div className="text-4xl md:text-5xl font-oswald text-neon-green mb-3 font-black">8</div>
-            <div className="text-text-secondary font-oswald font-semibold text-lg">Sports Analyzed</div>
-          </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.1, y: -10 }}
-            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-pink/20 to-neon-pink/10 border border-neon-pink/30"
-          >
-            <div className="text-4xl md:text-5xl font-oswald text-neon-pink mb-3 font-black">6</div>
-            <div className="text-text-secondary font-oswald font-semibold text-lg">Body Measurements</div>
-          </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.1, y: -10 }}
-            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-orange/20 to-neon-orange/10 border border-neon-orange/30"
-          >
-            <div className="text-4xl md:text-5xl font-oswald text-neon-orange mb-3 font-black">95%</div>
-            <div className="text-text-secondary font-oswald font-semibold text-lg">Accuracy Rate</div>
-          </motion.div>
-        </motion.div>
+        
       </div>
 
       {/* Bold Animated Background Elements */}
