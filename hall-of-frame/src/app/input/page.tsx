@@ -4,9 +4,10 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Ruler, Weight, Target, Camera, X } from 'lucide-react';
+import { ArrowLeft, Ruler, Weight, Target, Camera, X, Upload, AlertCircle } from 'lucide-react';
 import BodySilhouette from '@/components/BodySilhouette';
 import { BodyMeasurements } from '@/types';
+import { uploadImage, checkBackendHealth, UploadResponse } from '@/services/imageUpload';
 
 export default function InputPage() {
   const router = useRouter();
@@ -19,6 +20,9 @@ export default function InputPage() {
     hip: 0
   });
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [backendConnected, setBackendConnected] = useState<boolean | null>(null);
   const [activeField, setActiveField] = useState<keyof BodyMeasurements | null>(null);
 
   const handleMeasurementChange = (key: keyof BodyMeasurements, value: number) => {
@@ -30,12 +34,41 @@ export default function InputPage() {
     }));
   };
 
-  // Check for user photo on component mount
+  // Check for user photo and extracted measurements on component mount
   React.useEffect(() => {
     const photo = localStorage.getItem('userPhoto');
     if (photo) {
       setUserPhoto(photo);
     }
+    
+    // Check for extracted measurements from photo processing
+    const extractedData = localStorage.getItem('extractedMeasurements');
+    if (extractedData) {
+      try {
+        const parsedData = JSON.parse(extractedData);
+        console.log('Extracted measurements from photo:', parsedData);
+        
+        // If we have extracted measurements, populate the form
+        if (parsedData.extracted_measurements) {
+          const extractedMeasurements = parsedData.extracted_measurements;
+          console.log('Auto-populating measurements:', extractedMeasurements);
+          
+          setMeasurements({
+            height: extractedMeasurements.height || 0,
+            weight: extractedMeasurements.weight || 0,
+            wingspan: extractedMeasurements.wingspan || 0,
+            shoulderWidth: extractedMeasurements.shoulderWidth || 0,
+            waist: extractedMeasurements.waist || 0,
+            hip: extractedMeasurements.hip || 0
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing extracted measurements:', error);
+      }
+    }
+    
+    // Check backend health
+    checkBackendHealth().then(setBackendConnected);
   }, []);
 
   const validateMeasurements = (measurements: BodyMeasurements): boolean => {
@@ -61,7 +94,37 @@ export default function InputPage() {
     return true; // All measurements are within range
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    console.log('handleSubmit called, userPhoto:', !!userPhoto);
+    setUploadError(null);
+    
+    // If user has a photo, upload it to the backend first
+    if (userPhoto) {
+      console.log('Starting image upload...');
+      setIsUploading(true);
+      
+      try {
+        const uploadResult: UploadResponse = await uploadImage(userPhoto);
+        
+        if (uploadResult.success) {
+          console.log('Image uploaded successfully:', uploadResult.data);
+          
+          // Store the backend response data for later use
+          localStorage.setItem('uploadedImageData', JSON.stringify(uploadResult.data));
+        } else {
+          setUploadError(uploadResult.error || 'Failed to upload image');
+          setIsUploading(false);
+          return; // Don't proceed if upload failed
+        }
+      } catch (error) {
+        setUploadError('Unexpected error during upload');
+        setIsUploading(false);
+        return;
+      }
+      
+      setIsUploading(false);
+    }
+    
     // Store measurements in localStorage for the loading and results pages
     localStorage.setItem('userMeasurements', JSON.stringify(measurements));
     
@@ -140,6 +203,38 @@ export default function InputPage() {
           <div className="w-20"></div> {/* Spacer for centering */}
         </motion.div>
 
+        {/* Backend Connection Status */}
+        {backendConnected === false && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-red-900/20 border border-red-500 rounded-xl flex items-center gap-3"
+          >
+            <AlertCircle className="text-red-400" size={20} />
+            <div>
+              <p className="text-red-400 font-oswald font-bold">Backend Disconnected</p>
+              <p className="text-red-300 text-sm font-oswald">
+                Image upload unavailable. Make sure Flask server is running on localhost:5000
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Upload Error Display */}
+        {uploadError && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-red-900/20 border border-red-500 rounded-xl flex items-center gap-3"
+          >
+            <AlertCircle className="text-red-400" size={20} />
+            <div>
+              <p className="text-red-400 font-oswald font-bold">Upload Failed</p>
+              <p className="text-red-300 text-sm font-oswald">{uploadError}</p>
+            </div>
+          </motion.div>
+        )}
+
         {/* Photo Preview Section */}
         {userPhoto && (
           <motion.div
@@ -160,7 +255,10 @@ export default function InputPage() {
                     Photo Captured
                   </h3>
                   <p className="text-text-secondary font-oswald">
-                    This photo will help with more accurate analysis
+                    {backendConnected === false 
+                      ? "Will be processed locally (backend offline)"
+                      : "Will be uploaded for enhanced analysis"
+                    }
                   </p>
                 </div>
               </div>
@@ -336,19 +434,25 @@ export default function InputPage() {
             {/* Submit Button */}
             <motion.button
               onClick={handleSubmit}
-              disabled={!isFormValid}
-              className={`w-full mt-8 py-6 px-8 rounded-xl font-oswald font-black text-xl transition-all duration-500 ${
-                isFormValid
+              disabled={!isFormValid || isUploading}
+              className={`w-full mt-8 py-6 px-8 rounded-xl font-oswald font-black text-xl transition-all duration-500 flex items-center justify-center gap-3 ${
+                isFormValid && !isUploading
                   ? 'btn-accent neon-glow-green hover:neon-glow-pink'
                   : 'bg-gray-700 text-gray-400 cursor-not-allowed'
               }`}
-              whileHover={isFormValid ? { scale: 1.02 } : {}}
-              whileTap={isFormValid ? { scale: 0.98 } : {}}
+              whileHover={isFormValid && !isUploading ? { scale: 1.02 } : {}}
+              whileTap={isFormValid && !isUploading ? { scale: 0.98 } : {}}
             >
-              {isFormValid 
-                ? (userPhoto && measurements.height === 0 ? 'See My Match (Photo Only)' : 'See My Match')
-                : 'Enter Required Measurements'
-              }
+              {isUploading ? (
+                <>
+                  <Upload className="animate-pulse" size={20} />
+                  Uploading Image...
+                </>
+              ) : isFormValid ? (
+                userPhoto && measurements.height === 0 ? 'See My Match (Photo Only)' : 'See My Match'
+              ) : (
+                'Enter Required Measurements'
+              )}
             </motion.button>
 
             {/* Progress Indicator */}
@@ -386,7 +490,7 @@ export default function InputPage() {
           className="mt-12 card p-6"
         >
           <h3 className="text-xl font-oswald font-bold text-neon-gold mb-4">
-            💡 Measurement Tips
+            Measurement Tips
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-400 font-oswald">
             <div>

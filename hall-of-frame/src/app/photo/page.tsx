@@ -3,7 +3,8 @@
 import { motion } from 'framer-motion';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Camera, Upload, SkipForward, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Camera, Upload, SkipForward, RotateCcw, Loader } from 'lucide-react';
+import { uploadImage, UploadResponse } from '@/services/imageUpload';
 
 export default function PhotoPage() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function PhotoPage() {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingError, setProcessingError] = useState<string | null>(null);
 
   const startCamera = async () => {
     try {
@@ -73,12 +76,35 @@ export default function PhotoPage() {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const imageData = capturedImage || uploadedImage;
-    if (imageData) {
-      localStorage.setItem('userPhoto', imageData);
+    if (!imageData) return;
+
+    setIsProcessing(true);
+    setProcessingError(null);
+
+    try {
+      console.log('Uploading image to backend for measurement extraction...');
+      const uploadResult: UploadResponse = await uploadImage(imageData);
+      
+      if (uploadResult.success) {
+        console.log('Image processed successfully:', uploadResult.data);
+        
+        // Store both the image and the processing results
+        localStorage.setItem('userPhoto', imageData);
+        localStorage.setItem('extractedMeasurements', JSON.stringify(uploadResult.data));
+        
+        // Navigate to input page
+        router.push('/input');
+      } else {
+        setProcessingError(uploadResult.error || 'Failed to process image');
+        setIsProcessing(false);
+      }
+    } catch (error) {
+      console.error('Error processing image:', error);
+      setProcessingError('Unexpected error occurred while processing image');
+      setIsProcessing(false);
     }
-    router.push('/input');
   };
 
   const handleSkip = () => {
@@ -260,6 +286,18 @@ export default function PhotoPage() {
           </motion.div>
         </div>
 
+        {/* Processing Error Display */}
+        {processingError && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 p-4 bg-red-900/20 border border-red-500 rounded-xl"
+          >
+            <p className="text-red-400 font-oswald font-bold">Processing Failed</p>
+            <p className="text-red-300 text-sm font-oswald">{processingError}</p>
+          </motion.div>
+        )}
+
         {/* Action Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -270,19 +308,34 @@ export default function PhotoPage() {
           {(capturedImage || uploadedImage) && (
             <motion.button
               onClick={handleContinue}
-              className="btn-primary py-4 px-8 text-xl font-oswald font-black"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              disabled={isProcessing}
+              className={`py-4 px-8 text-xl font-oswald font-black flex items-center justify-center gap-3 ${
+                isProcessing 
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed' 
+                  : 'btn-primary'
+              }`}
+              whileHover={!isProcessing ? { scale: 1.05 } : {}}
+              whileTap={!isProcessing ? { scale: 0.95 } : {}}
             >
-              Continue with Photo
+              {isProcessing ? (
+                <>
+                  <Loader className="animate-spin" size={24} />
+                  Processing Image...
+                </>
+              ) : (
+                'Continue with Photo'
+              )}
             </motion.button>
           )}
           
           <motion.button
             onClick={handleSkip}
-            className="btn-secondary py-4 px-8 text-xl font-oswald font-black"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            disabled={isProcessing}
+            className={`py-4 px-8 text-xl font-oswald font-black ${
+              isProcessing ? 'opacity-50 cursor-not-allowed' : 'btn-secondary'
+            }`}
+            whileHover={!isProcessing ? { scale: 1.05 } : {}}
+            whileTap={!isProcessing ? { scale: 0.95 } : {}}
           >
             <SkipForward className="inline-block mr-3" size={24} />
             Skip to Manual Input
