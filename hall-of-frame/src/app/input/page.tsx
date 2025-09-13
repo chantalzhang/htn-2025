@@ -37,10 +37,39 @@ export default function InputPage() {
     }
   }, []);
 
+  const validateMeasurements = (measurements: BodyMeasurements): boolean => {
+    const validationRanges = {
+      height: { min: 100, max: 250 },
+      weight: { min: 30, max: 200 },
+      wingspan: { min: 100, max: 250 },
+      shoulderWidth: { min: 30, max: 80 },
+      waist: { min: 50, max: 150 },
+      hip: { min: 60, max: 160 }
+    };
+
+    // Check if any measurement is out of range
+    for (const [key, value] of Object.entries(measurements)) {
+      const field = key as keyof BodyMeasurements;
+      const range = validationRanges[field];
+      
+      if (value > 0 && (value < range.min || value > range.max)) {
+        return false; // Found an out-of-range measurement
+      }
+    }
+    
+    return true; // All measurements are within range
+  };
+
   const handleSubmit = () => {
     // Store measurements in localStorage for the loading and results pages
     localStorage.setItem('userMeasurements', JSON.stringify(measurements));
-    router.push('/loading');
+    
+    // Check if measurements are within expected ranges
+    if (validateMeasurements(measurements)) {
+      router.push('/loading');
+    } else {
+      router.push('/validation');
+    }
   };
 
   const handleClearPhoto = () => {
