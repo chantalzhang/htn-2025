@@ -160,7 +160,7 @@ export default function ResultsPage() {
               letterSpacing: '0.05em'
             }}
           >
-            YOU'RE BUILT LIKE
+            YOU'RE BUILT FOR
           </motion.h1>
           
           <motion.div
@@ -170,7 +170,7 @@ export default function ResultsPage() {
             className="text-4xl md:text-6xl font-oswald text-neon-blue mb-3 font-black"
             style={{ textShadow: '0 0 30px rgba(0, 212, 255, 0.6)' }}
           >
-            {topMatch.athlete.name}
+            {topSport.sport}
           </motion.div>
           
           <motion.div
@@ -180,7 +180,7 @@ export default function ResultsPage() {
             className="text-2xl md:text-3xl text-neon-green mb-8 font-bold"
             style={{ textShadow: '0 0 20px rgba(0, 255, 136, 0.5)' }}
           >
-            {topMatch.athlete.sport} • {Math.round(topMatch.similarityScore)}% Match
+            {Math.round(topSport.score)}% Match
           </motion.div>
 
           <motion.p
@@ -191,6 +191,26 @@ export default function ResultsPage() {
           >
             {results.analysis}
           </motion.p>
+        </motion.div>
+
+        {/* Athlete Match Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1 }}
+          className="text-center mb-12"
+        >
+          <div className="card-blue p-6 max-w-2xl mx-auto">
+            <h3 className="text-2xl font-oswald font-black text-neon-blue mb-4">
+              Most Similar Athlete
+            </h3>
+            <div className="text-xl font-oswald text-white mb-2">
+              {topMatch.athlete.name}
+            </div>
+            <div className="text-lg text-neon-green font-oswald font-bold">
+              {topMatch.athlete.sport} • {Math.round(topMatch.similarityScore)}% Match
+            </div>
+          </div>
         </motion.div>
 
         {/* Athletic Stats Section */}
