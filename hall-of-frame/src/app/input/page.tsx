@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Ruler, Weight, Target, Camera } from 'lucide-react';
+import { ArrowLeft, Ruler, Weight, Target, Camera, X } from 'lucide-react';
 import BodySilhouette from '@/components/BodySilhouette';
 import { BodyMeasurements } from '@/types';
 
@@ -21,9 +21,11 @@ export default function InputPage() {
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
 
   const handleMeasurementChange = (key: keyof BodyMeasurements, value: number) => {
+    const numericValue = Number(value);
+    console.log(`Updating ${key} to:`, numericValue, 'Type:', typeof numericValue);
     setMeasurements(prev => ({
       ...prev,
-      [key]: value
+      [key]: numericValue
     }));
   };
 
@@ -41,7 +43,26 @@ export default function InputPage() {
     router.push('/loading');
   };
 
-  const isFormValid = (measurements.height > 0 && measurements.weight > 0 && measurements.wingspan > 0) || userPhoto;
+  const handleClearPhoto = () => {
+    localStorage.removeItem('userPhoto');
+    setUserPhoto(null);
+  };
+
+  const isFormValid = (
+    (Number(measurements.height) > 0 && 
+     Number(measurements.weight) > 0 && 
+     Number(measurements.wingspan) > 0) || 
+    userPhoto
+  );
+  
+  // Debug logging
+  console.log('Form validation debug:', {
+    height: measurements.height,
+    weight: measurements.weight,
+    wingspan: measurements.wingspan,
+    userPhoto,
+    isFormValid
+  });
 
   return (
     <div className="min-h-screen py-8 px-4 relative overflow-hidden">
@@ -89,20 +110,29 @@ export default function InputPage() {
             transition={{ duration: 0.8 }}
             className="mb-8 card-green p-6"
           >
-            <div className="flex items-center gap-4">
-              <img
-                src={userPhoto}
-                alt="Your photo"
-                className="w-20 h-20 object-cover rounded-xl border-2 border-neon-green"
-              />
-              <div>
-                <h3 className="text-xl font-oswald font-black text-neon-green mb-2">
-                  Photo Captured
-                </h3>
-                <p className="text-text-secondary font-oswald">
-                  This photo will help with more accurate analysis
-                </p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <img
+                  src={userPhoto}
+                  alt="Your photo"
+                  className="w-20 h-20 object-cover rounded-xl border-2 border-neon-green"
+                />
+                <div>
+                  <h3 className="text-xl font-oswald font-black text-neon-green mb-2">
+                    Photo Captured
+                  </h3>
+                  <p className="text-text-secondary font-oswald">
+                    This photo will help with more accurate analysis
+                  </p>
+                </div>
               </div>
+              <button
+                onClick={handleClearPhoto}
+                className="btn-secondary px-4 py-2 flex items-center gap-2 hover:bg-red-600 hover:border-red-500 transition-all duration-300"
+              >
+                <X size={16} />
+                <span className="font-oswald">Clear Photo</span>
+              </button>
             </div>
           </motion.div>
         )}
@@ -158,7 +188,7 @@ export default function InputPage() {
                   <input
                     type="number"
                     value={measurements.height || ''}
-                    onChange={(e) => handleMeasurementChange('height', Number(e.target.value))}
+                    onChange={(e) => handleMeasurementChange('height', Number(e.target.value) || 0)}
                     className="input-field w-full pl-10"
                     placeholder="Enter your height"
                   />
@@ -175,7 +205,7 @@ export default function InputPage() {
                   <input
                     type="number"
                     value={measurements.weight || ''}
-                    onChange={(e) => handleMeasurementChange('weight', Number(e.target.value))}
+                    onChange={(e) => handleMeasurementChange('weight', Number(e.target.value) || 0)}
                     className="input-field w-full pl-10"
                     placeholder="Enter your weight"
                   />
@@ -192,7 +222,7 @@ export default function InputPage() {
                   <input
                     type="number"
                     value={measurements.wingspan || ''}
-                    onChange={(e) => handleMeasurementChange('wingspan', Number(e.target.value))}
+                    onChange={(e) => handleMeasurementChange('wingspan', Number(e.target.value) || 0)}
                     className="input-field w-full pl-10"
                     placeholder="Enter your wingspan"
                   />
@@ -209,7 +239,7 @@ export default function InputPage() {
                   <input
                     type="number"
                     value={measurements.shoulderWidth || ''}
-                    onChange={(e) => handleMeasurementChange('shoulderWidth', Number(e.target.value))}
+                    onChange={(e) => handleMeasurementChange('shoulderWidth', Number(e.target.value) || 0)}
                     className="input-field w-full pl-10"
                     placeholder="Enter your shoulder width"
                   />
@@ -226,7 +256,7 @@ export default function InputPage() {
                   <input
                     type="number"
                     value={measurements.waist || ''}
-                    onChange={(e) => handleMeasurementChange('waist', Number(e.target.value))}
+                    onChange={(e) => handleMeasurementChange('waist', Number(e.target.value) || 0)}
                     className="input-field w-full pl-10"
                     placeholder="Enter your waist measurement"
                   />
@@ -243,7 +273,7 @@ export default function InputPage() {
                   <input
                     type="number"
                     value={measurements.hip || ''}
-                    onChange={(e) => handleMeasurementChange('hip', Number(e.target.value))}
+                    onChange={(e) => handleMeasurementChange('hip', Number(e.target.value) || 0)}
                     className="input-field w-full pl-10"
                     placeholder="Enter your hip measurement"
                   />
