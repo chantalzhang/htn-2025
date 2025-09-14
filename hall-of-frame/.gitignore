@@ -34,3 +34,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# virtual environment
+.venv
+
+
+# models
+models/
+backend/measurements/Human-Body-Measurements-using-Computer-Vision/models/
+backend/measurements/Human-Body-Measurements-using-Computer-Vision/deeplab_model/
+*.pkl
+*.tar.gz
