@@ -167,7 +167,18 @@ export default function ResultsPage() {
   }, [router]);
 
   const handleStartOver = () => {
+    // Clear all localStorage data
     localStorage.removeItem('userMeasurements');
+    localStorage.removeItem('userGender');
+    localStorage.removeItem('userPhoto');
+    localStorage.removeItem('extractedMeasurements');
+    localStorage.removeItem('uploadedImageData');
+    
+    // Reset component states
+    setResults(null);
+    setLoading(false);
+    
+    // Navigate back to input page
     router.push('/input');
   };
 
@@ -220,6 +231,29 @@ export default function ResultsPage() {
   const topMatch = results.topAthletes[0];
   const topSport = results.topSports[0];
 
+  // Function to get the appropriate background image based on sport
+  const getSportBackgroundImage = (sport: string): string => {
+    const sportLower = sport.toLowerCase();
+    
+    if (sportLower.includes('basketball')) return '/images/basketball.png';
+    if (sportLower.includes('gymnastics')) return '/images/gym.png';
+    if (sportLower.includes('soccer') || sportLower.includes('football')) return '/images/soccer.png';
+    if (sportLower.includes('swimming') || sportLower.includes('rowing')) return '/images/swim.png';
+    if (sportLower.includes('tennis')) return '/images/tennis.png';
+    if (sportLower.includes('volleyball')) return '/images/volleyball.png';
+    if (sportLower.includes('weightlifting') || sportLower.includes('weight lifting')) return '/images/weightlift.png';
+    if (sportLower.includes('track') || sportLower.includes('sprint') || sportLower.includes('running')) {
+      // Use sprint for track & field, sprint for running events
+      if (sportLower.includes('distance') || sportLower.includes('marathon') || sportLower.includes('long')) {
+        return '/images/marathon.png';
+      }
+      return '/images/sprint.png';
+    }
+    
+    // Default fallback
+    return '/images/marathon.png';
+  };
+
   return (
     <div className="min-h-screen py-8 px-4 relative overflow-hidden">
       {/* Bold Background Elements */}
@@ -235,12 +269,12 @@ export default function ResultsPage() {
           className="
             absolute inset-0 pointer-events-none select-none
             opacity-60             /* transparency */
-            bg-[url('/images/marathon.png')]
             bg-no-repeat bg-contain md:bg-cover bg-center
             blur-sm
             saturate-125 contrast-110
           "
           style={{
+            backgroundImage: `url('${getSportBackgroundImage(topSport.sport)}')`,
             backgroundSize: '400px 400px',  /* Fixed small size */
             backgroundPosition: 'center',
             top: '-2400px'
