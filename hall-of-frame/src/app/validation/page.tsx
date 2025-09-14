@@ -43,8 +43,9 @@ export default function ValidationPage() {
       Object.entries(parsedMeasurements).forEach(([key, value]) => {
         const field = key as keyof BodyMeasurements;
         const range = validationRanges[field];
+        const numValue = Number(value);
         
-        if (value > 0 && (value < range.min || value > range.max)) {
+        if (numValue > 0 && (numValue < range.min || numValue > range.max)) {
           issues.push({
             field,
             value: Number(value),
@@ -104,12 +105,12 @@ export default function ValidationPage() {
           className="text-center mb-12"
         >
           <div className="flex items-center justify-center gap-4 mb-6">
-            <button
+            {/* <button
               onClick={handleGoBack}
               className="btn-secondary p-3 hover:bg-gray-700 transition-all duration-300"
             >
               <ArrowLeft size={20} />
-            </button>
+            </button> */}
             <div className="flex-1"></div>
           </div>
 
@@ -162,14 +163,14 @@ export default function ValidationPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  {/* <div className="text-right">
                     <p className="text-text-secondary font-oswald text-sm">
                       Expected range:
                     </p>
                     <p className="text-neon-green font-oswald font-bold">
                       {issue.min}{issue.field === 'weight' ? 'kg' : 'cm'} - {issue.max}{issue.field === 'weight' ? 'kg' : 'cm'}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </motion.div>
             ))}

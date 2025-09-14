@@ -69,7 +69,7 @@ export default function SpiderChart({ stats, className = '' }: SpiderChartProps)
     if (!ctx) return;
 
     // Set canvas size
-    const size = 300;
+    const size = 350;
     canvas.width = size;
     canvas.height = size;
 
@@ -122,36 +122,13 @@ export default function SpiderChart({ stats, className = '' }: SpiderChartProps)
     
     for (let i = 0; i < statCount; i++) {
       const angle = i * angleStep - Math.PI / 2;
-      const labelRadius = radius + 20;
+      const labelRadius = radius + 30;
       const x = centerX + Math.cos(angle) * labelRadius;
       const y = centerY + Math.sin(angle) * labelRadius;
       
       ctx.fillText(statLabels[i], x, y);
     }
 
-    // Draw stat values
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px Oswald';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    for (let i = 0; i < statCount; i++) {
-      const angle = i * angleStep - Math.PI / 2;
-      const statValue = Object.values(stats)[i];
-      const valueRadius = (radius * statValue) / 100;
-      const x = centerX + Math.cos(angle) * valueRadius;
-      const y = centerY + Math.sin(angle) * valueRadius;
-      
-      // Add background circle for better visibility
-      ctx.beginPath();
-      ctx.arc(x, y, 12, 0, 2 * Math.PI);
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      ctx.fill();
-      
-      // Draw the number
-      ctx.fillStyle = '#ffffff';
-      ctx.fillText(Math.round(statValue).toString(), x, y);
-    }
 
     // Draw the spider web
     const statValues = Object.values(stats);
@@ -214,7 +191,7 @@ export default function SpiderChart({ stats, className = '' }: SpiderChartProps)
       <canvas
         ref={canvasRef}
         className="cursor-pointer"
-        style={{ maxWidth: '300px', maxHeight: '300px' }}
+        style={{ maxWidth: '350px', maxHeight: '350px' }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       />
@@ -227,8 +204,8 @@ export default function SpiderChart({ stats, className = '' }: SpiderChartProps)
           exit={{ opacity: 0, scale: 0.8 }}
           className="absolute pointer-events-none z-10 bg-dark-card border border-neon-blue rounded-lg p-3 shadow-2xl"
           style={{
-            left: mousePos.x - 100,
-            top: mousePos.y - 80,
+            left: mousePos.x - 200,
+            top: mousePos.y - 180,
             transform: 'translate(-50%, -100%)'
           }}
         >
@@ -244,8 +221,6 @@ export default function SpiderChart({ stats, className = '' }: SpiderChartProps)
             </div>
           </div>
           
-          {/* Tooltip arrow */}
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-neon-blue"></div>
         </motion.div>
       )}
     </div>

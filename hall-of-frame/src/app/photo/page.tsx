@@ -17,6 +17,7 @@ export default function PhotoPage() {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingError, setProcessingError] = useState<string | null>(null);
+  const [height, setHeight] = useState<string>('');
 
   const startCamera = async () => {
     try {
@@ -80,6 +81,18 @@ export default function PhotoPage() {
     const imageData = capturedImage || uploadedImage;
     if (!imageData) return;
 
+    // Check if height is provided
+    if (!height || height.trim() === '') {
+      alert('Please enter your height before continuing.');
+      return;
+    }
+
+    const heightValue = parseFloat(height);
+    if (isNaN(heightValue) || heightValue < 100 || heightValue > 250) {
+      alert('Please enter a valid height between 100 and 250 cm.');
+      return;
+    }
+
     setIsProcessing(true);
     setProcessingError(null);
 
@@ -90,9 +103,10 @@ export default function PhotoPage() {
       if (uploadResult.success) {
         console.log('Image processed successfully:', uploadResult.data);
         
-        // Store both the image and the processing results
+        // Store the image, processing results, and height
         localStorage.setItem('userPhoto', imageData);
         localStorage.setItem('extractedMeasurements', JSON.stringify(uploadResult.data));
+        localStorage.setItem('userHeight', heightValue.toString());
         
         // Navigate to input page
         router.push('/input');
@@ -114,6 +128,7 @@ export default function PhotoPage() {
   const handleRetake = () => {
     setCapturedImage(null);
     setUploadedImage(null);
+    setHeight('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -286,6 +301,45 @@ export default function PhotoPage() {
           </motion.div>
         </div>
 
+        {/* Height Input Field - Only show when photo is captured/uploaded */}
+        {(capturedImage || uploadedImage) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 max-w-md mx-auto"
+          >
+            <div className="card-green p-6">
+              <h3 className="text-2xl font-oswald font-black text-neon-green mb-4 text-center">
+                Enter Your Height
+              </h3>
+              <p className="text-text-secondary text-center font-oswald mb-6">
+                We need your height to provide accurate measurements
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="height-input" className="block text-sm font-oswald font-bold text-neon-green mb-2">
+                    Height (cm)
+                  </label>
+                  <input
+                    id="height-input"
+                    type="number"
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
+                    placeholder="Enter your height in centimeters"
+                    className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-600 rounded-xl text-white font-oswald focus:border-neon-green focus:outline-none transition-colors duration-300"
+                    min="100"
+                    max="250"
+                    step="0.1"
+                  />
+                </div>
+                <div className="text-xs text-gray-400 font-oswald text-center">
+                  <p>Example: 175 cm (5'9")</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Processing Error Display */}
         {processingError && (
           <motion.div
@@ -308,20 +362,22 @@ export default function PhotoPage() {
           {(capturedImage || uploadedImage) && (
             <motion.button
               onClick={handleContinue}
-              disabled={isProcessing}
+              disabled={isProcessing || !height || height.trim() === ''}
               className={`py-4 px-8 text-xl font-oswald font-black flex items-center justify-center gap-3 ${
-                isProcessing 
+                isProcessing || !height || height.trim() === ''
                   ? 'bg-gray-700 text-gray-400 cursor-not-allowed' 
                   : 'btn-primary'
               }`}
-              whileHover={!isProcessing ? { scale: 1.05 } : {}}
-              whileTap={!isProcessing ? { scale: 0.95 } : {}}
+              whileHover={!isProcessing && height && height.trim() !== '' ? { scale: 1.05 } : {}}
+              whileTap={!isProcessing && height && height.trim() !== '' ? { scale: 0.95 } : {}}
             >
               {isProcessing ? (
                 <>
                   <Loader className="animate-spin" size={24} />
                   Processing Image...
                 </>
+              ) : !height || height.trim() === '' ? (
+                'Enter Height to Continue'
               ) : (
                 'Continue with Photo'
               )}
