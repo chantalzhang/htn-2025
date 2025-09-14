@@ -1,8 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+import sys
 from werkzeug.utils import secure_filename
 import uuid
+
+# Add parent directory to path to import our ML modules
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    from sport_recommendation_engine import SportRecommendationEngine
+    from sport_database import get_sport_info, get_sport_stats, get_sport_description
+    ML_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: ML modules not available: {e}")
+    ML_AVAILABLE = False
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
@@ -95,7 +107,7 @@ def upload_image():
             
             # Mock measurement extraction (replace with actual CV logic)
             import random
-            
+    
             mock_measurements = {
                 'height': round(random.uniform(160, 190), 1),
                 'weight': round(random.uniform(60, 90), 1), 
@@ -128,6 +140,85 @@ def upload_image():
         # Handle any unexpected errors
         return jsonify({
             'error': f'An error occurred while processing the image: {str(e)}',
+            'success': False
+        }), 500
+
+@app.route('/recommend', methods=['POST'])
+def recommend_sport():
+    """
+    Get sport recommendation and similar athlete based on body measurements.
+    
+    Expected JSON data:
+    {
+        "gender": "male" or "female",
+        "height": 180.5,
+        "weight": 75.2,
+        "wingspan": 185.0,
+        "shoulderWidth": 45.0,
+        "waist": 80.0,
+        "hip": 90.0
+    }
+    
+    Returns:
+    - JSON response with sport recommendation and similar athlete
+    """
+    print("=== RECOMMEND ENDPOINT HIT ===")
+    
+    if not ML_AVAILABLE:
+        return jsonify({
+            'error': 'ML modules not available',
+            'success': False
+        }), 500
+    
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['gender', 'height', 'weight', 'wingspan', 'shoulderWidth', 'waist', 'hip']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({
+                    'error': f'Missing required field: {field}',
+                    'success': False
+                }), 400
+        
+        # Initialize recommendation engine
+        engine = SportRecommendationEngine()
+        
+        # Get recommendation
+        recommendation = engine.recommend_sport(
+            gender=data['gender'],
+            height=data['height'],
+            weight=data['weight'],
+            wingspan=data['wingspan'],
+            shoulder_width=data['shoulderWidth'],
+            waist=data['waist'],
+            hip=data['hip']
+        )
+        
+        # Get similar athlete
+        similar_athlete = engine.find_similar_athlete(
+            gender=data['gender'],
+            height=data['height'],
+            weight=data['weight'],
+            wingspan=data['wingspan'],
+            shoulder_width=data['shoulderWidth'],
+            waist=data['waist'],
+            hip=data['hip']
+        )
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'recommendation': recommendation,
+                'similar_athlete': similar_athlete
+            }
+        }), 200
+        
+    except Exception as e:
+        print(f"Error in recommend endpoint: {str(e)}")
+        return jsonify({
+            'error': f'An error occurred while getting recommendations: {str(e)}',
             'success': False
         }), 500
 
