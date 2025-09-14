@@ -43,8 +43,9 @@ export default function ValidationPage() {
       Object.entries(parsedMeasurements).forEach(([key, value]) => {
         const field = key as keyof BodyMeasurements;
         const range = validationRanges[field];
+        const numValue = Number(value);
         
-        if (value > 0 && (value < range.min || value > range.max)) {
+        if (numValue > 0 && (numValue < range.min || numValue > range.max)) {
           issues.push({
             field,
             value: Number(value),
