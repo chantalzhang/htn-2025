@@ -13,17 +13,52 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Bold Background Elements */}
+      {/* Dynamic Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Geometric shapes inspired by OpenAI design */}
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary-blue/10 via-transparent to-neon-pink/10"></div>
-        <div className="absolute top-1/4 right-0 w-96 h-96 bg-gradient-radial from-neon-blue/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-gradient-radial from-neon-pink/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-radial from-neon-green/15 to-transparent rounded-full blur-2xl"></div>
+        {/* Animated gradient background */}
+        <motion.div 
+          className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary-blue/10 via-transparent to-neon-pink/10"
+          animate={{
+            background: [
+              'linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 128, 0.1) 100%)',
+              'linear-gradient(135deg, rgba(255, 0, 128, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%)',
+              'linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%)'
+            ]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        {/* Pulsing radial gradients */}
+        <motion.div 
+          className="absolute top-1/4 right-0 w-96 h-96 bg-gradient-radial from-neon-blue/20 to-transparent rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2]
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        <motion.div 
+          className="absolute bottom-1/4 left-0 w-80 h-80 bg-gradient-radial from-neon-pink/20 to-transparent rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.4, 0.2, 0.4]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        
+        <motion.div 
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-radial from-neon-green/15 to-transparent rounded-full blur-2xl"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.15, 0.3, 0.15]
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
       </div>
 
       {/* Hero Section */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center p-48">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -67,14 +102,10 @@ export default function LandingPage() {
           </motion.p>
 
           {/* CTA Button */}
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            whileHover={{ scale: 1.1, y: -5 }}
-            whileTap={{ scale: 0.95 }}
+          <button
+            
             onClick={handleGetStarted}
-            className="btn-primary text-3xl px-16 py-6 neon-glow-blue hover:neon-glow-pink transition-all duration-500 font-oswald font-black"
+            className="btn-primary text-3xl px-16 py-6 font-oswald font-black"
             style={{ 
               background: 'linear-gradient(135deg, #1e40af, #3b82f6, #00d4ff)',
               boxShadow: '0 0 30px rgba(0, 212, 255, 0.4), 0 0 60px rgba(0, 212, 255, 0.2)'
@@ -82,7 +113,7 @@ export default function LandingPage() {
           >
             <Trophy className="inline-block mr-4" size={40} />
             Find Your Sport
-          </motion.button>
+          </button>
         </motion.div>
 
         {/* Features Section */}
@@ -101,7 +132,7 @@ export default function LandingPage() {
               Precise Analysis
             </h3>
             <p className="text-text-secondary text-lg leading-relaxed">
-              Compare your measurements against thousands of elite athletes to find your perfect match
+              Compare your measurements against elite athletes to find your perfect match
             </p>
           </motion.div>
 
@@ -133,41 +164,7 @@ export default function LandingPage() {
         </motion.div>
 
         {/* Stats Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
-          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-12 max-w-6xl mx-auto"
-        >
-          <motion.div 
-            whileHover={{ scale: 1.1, y: -10 }}
-            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-blue/20 to-neon-blue/10 border border-neon-blue/30"
-          >
-            <div className="text-4xl md:text-5xl font-oswald text-neon-blue mb-3 font-black">50+</div>
-            <div className="text-text-secondary font-oswald font-semibold text-lg">Elite Athletes</div>
-          </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.1, y: -10 }}
-            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-green/20 to-neon-green/10 border border-neon-green/30"
-          >
-            <div className="text-4xl md:text-5xl font-oswald text-neon-green mb-3 font-black">8</div>
-            <div className="text-text-secondary font-oswald font-semibold text-lg">Sports Analyzed</div>
-          </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.1, y: -10 }}
-            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-pink/20 to-neon-pink/10 border border-neon-pink/30"
-          >
-            <div className="text-4xl md:text-5xl font-oswald text-neon-pink mb-3 font-black">6</div>
-            <div className="text-text-secondary font-oswald font-semibold text-lg">Body Measurements</div>
-          </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.1, y: -10 }}
-            className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary-orange/20 to-neon-orange/10 border border-neon-orange/30"
-          >
-            <div className="text-4xl md:text-5xl font-oswald text-neon-orange mb-3 font-black">95%</div>
-            <div className="text-text-secondary font-oswald font-semibold text-lg">Accuracy Rate</div>
-          </motion.div>
-        </motion.div>
+        
       </div>
 
       {/* Bold Animated Background Elements */}

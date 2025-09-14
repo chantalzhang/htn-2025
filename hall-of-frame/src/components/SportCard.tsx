@@ -18,12 +18,6 @@ export default function SportCard({ sport, index }: SportCardProps) {
       whileHover={{ scale: 1.02, y: -5 }}
       className="card card-hover p-6 relative overflow-hidden"
     >
-      {/* Score Badge */}
-      <div className="absolute top-4 right-4">
-        <div className="bg-gradient-to-r from-neon-gold to-neon-blue text-dark-bg px-3 py-1 rounded-full text-sm font-bold">
-          {Math.round(sport.score)}% Match
-        </div>
-      </div>
 
       {/* Sport Icon */}
       <div className="text-6xl mb-4 text-center">
@@ -32,10 +26,10 @@ export default function SportCard({ sport, index }: SportCardProps) {
 
       {/* Sport Info */}
       <div className="text-center mb-4">
-        <h3 className="text-2xl font-montserrat font-bold text-white mb-2">
+        <h3 className="text-3xl font-montserrat font-bold text-white mb-3">
           {sport.sport}
         </h3>
-        <p className="text-gray-400 text-sm leading-relaxed">
+        <p className="text-gray-400 text-base leading-relaxed">
           {sport.description}
         </p>
       </div>
@@ -43,8 +37,8 @@ export default function SportCard({ sport, index }: SportCardProps) {
       {/* Why Match Section */}
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-3">
-          <Target className="text-neon-green" size={16} />
-          <span className="text-sm font-montserrat font-medium text-neon-green">
+          <Target className="text-neon-green" size={18} />
+          <span className="text-base font-montserrat font-medium text-neon-green">
             Why You Match
           </span>
         </div>
@@ -57,28 +51,13 @@ export default function SportCard({ sport, index }: SportCardProps) {
               transition={{ duration: 0.4, delay: index * 0.2 + idx * 0.1 }}
               className="flex items-start gap-2"
             >
-              <Star className="text-neon-gold mt-0.5 flex-shrink-0" size={12} />
-              <span className="text-xs text-gray-300">{reason}</span>
+              <Star className="text-neon-gold mt-0.5 flex-shrink-0" size={14} />
+              <span className="text-sm text-gray-300">{reason}</span>
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* Score Bar */}
-      <div className="mt-4">
-        <div className="flex justify-between text-xs text-gray-400 mb-1">
-          <span>Compatibility</span>
-          <span>{Math.round(sport.score)}%</span>
-        </div>
-        <div className="w-full bg-gray-700 rounded-full h-2">
-          <motion.div
-            className="bg-gradient-to-r from-neon-gold to-neon-blue h-2 rounded-full"
-            initial={{ width: 0 }}
-            animate={{ width: `${sport.score}%` }}
-            transition={{ duration: 1, delay: index * 0.2 + 0.5 }}
-          />
-        </div>
-      </div>
     </motion.div>
   );
 }

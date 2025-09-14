@@ -23,6 +23,8 @@ export default function InputPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [backendConnected, setBackendConnected] = useState<boolean | null>(null);
+  const [activeField, setActiveField] = useState<keyof BodyMeasurements | null>(null);
+  const [gender, setGender] = useState<string>('male');
 
   const handleMeasurementChange = (key: keyof BodyMeasurements, value: number) => {
     const numericValue = Number(value);
@@ -85,7 +87,7 @@ export default function InputPage() {
       const field = key as keyof BodyMeasurements;
       const range = validationRanges[field];
       
-      if (value > 0 && (value < range.min || value > range.max)) {
+      if (value === 0 || (value > 0 && (value < range.min || value > range.max))) {
         return false; // Found an out-of-range measurement
       }
     }
@@ -124,8 +126,9 @@ export default function InputPage() {
       setIsUploading(false);
     }
     
-    // Store measurements in localStorage for the loading and results pages
+    // Store measurements and gender in localStorage for the loading and results pages
     localStorage.setItem('userMeasurements', JSON.stringify(measurements));
+    localStorage.setItem('userGender', gender);
     
     // Check if measurements are within expected ranges
     if (validateMeasurements(measurements)) {
@@ -138,6 +141,14 @@ export default function InputPage() {
   const handleClearPhoto = () => {
     localStorage.removeItem('userPhoto');
     setUserPhoto(null);
+  };
+
+  const handleFieldFocus = (field: keyof BodyMeasurements) => {
+    setActiveField(field);
+  };
+
+  const handleFieldBlur = () => {
+    setActiveField(null);
   };
 
   const isFormValid = (
@@ -248,7 +259,7 @@ export default function InputPage() {
                   <p className="text-text-secondary font-oswald">
                     {backendConnected === false 
                       ? "Will be processed locally (backend offline)"
-                      : "Will be uploaded for enhanced analysis"
+                      : "Measurements extracted"
                     }
                   </p>
                 </div>
@@ -278,13 +289,14 @@ export default function InputPage() {
                 Interactive Body Map
               </h2>
               <p className="text-text-secondary text-lg font-oswald">
-                Click on different body parts to enter your measurements
+                Focus on input fields to see which body parts to measure
               </p>
             </div>
             
             <BodySilhouette
               measurements={measurements}
               onMeasurementChange={handleMeasurementChange}
+              activeField={activeField}
             />
           </motion.div>
 
@@ -306,6 +318,37 @@ export default function InputPage() {
             </div>
 
             <div className="space-y-6">
+              {/* Gender Selection */}
+              <div>
+                <label className="block text-sm font-oswald font-bold text-text-secondary mb-3">
+                  Gender
+                </label>
+                <div className="flex space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="male"
+                      checked={gender === 'male'}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="mr-2 text-neon-pink"
+                    />
+                    <span className="text-text-secondary font-oswald">Male</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="female"
+                      checked={gender === 'female'}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="mr-2 text-neon-pink"
+                    />
+                    <span className="text-text-secondary font-oswald">Female</span>
+                  </label>
+                </div>
+              </div>
+
               {/* Height */}
               <div>
                 <label className="block text-sm font-oswald font-bold text-text-secondary mb-3">
@@ -316,10 +359,11 @@ export default function InputPage() {
                     type="number"
                     value={measurements.height || ''}
                     onChange={(e) => handleMeasurementChange('height', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('height')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your height"
                   />
-                  <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -333,10 +377,11 @@ export default function InputPage() {
                     type="number"
                     value={measurements.weight || ''}
                     onChange={(e) => handleMeasurementChange('weight', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('weight')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your weight"
                   />
-                  <Weight className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -350,10 +395,11 @@ export default function InputPage() {
                     type="number"
                     value={measurements.wingspan || ''}
                     onChange={(e) => handleMeasurementChange('wingspan', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('wingspan')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your wingspan"
                   />
-                  <Target className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -367,10 +413,11 @@ export default function InputPage() {
                     type="number"
                     value={measurements.shoulderWidth || ''}
                     onChange={(e) => handleMeasurementChange('shoulderWidth', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('shoulderWidth')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your shoulder width"
                   />
-                  <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -384,10 +431,11 @@ export default function InputPage() {
                     type="number"
                     value={measurements.waist || ''}
                     onChange={(e) => handleMeasurementChange('waist', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('waist')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your waist measurement"
                   />
-                  <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -401,10 +449,11 @@ export default function InputPage() {
                     type="number"
                     value={measurements.hip || ''}
                     onChange={(e) => handleMeasurementChange('hip', Number(e.target.value) || 0)}
+                    onFocus={() => handleFieldFocus('hip')}
+                    onBlur={handleFieldBlur}
                     className="input-field w-full pl-10"
                     placeholder="Enter your hip measurement"
                   />
-                  <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
             </div>

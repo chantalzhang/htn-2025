@@ -1,0 +1,6 @@
+Player,Pos,Height,Weight,Wingspan,Hand Length,Hand Width
+Test Player 1,PG,6'2.00",180.0 lbs,,8.25,
+Test Player 2,C,,250.0 lbs,7'2.00",,9.50
+Test Player 3,SF,6'8.00",,6'11.00",9.00,
+Test Player 4,SG,,,6'8.00",8.50,9.25
+Test Player 5,PF,6'10.00",220.0 lbs,,,10.00

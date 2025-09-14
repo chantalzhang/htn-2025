@@ -1,0 +1,6 @@
+sport,height_cm,weight_kg,bmi,position,Player,height,weight,Wingspan,Hand Length,Hand Width
+basketball_test_missing,187.96,81.64656,23.110376388758617,PG,Test Player 1,"6'2.00""",180.0 lbs,,8.25,
+basketball_test_missing,,113.398,,C,Test Player 2,,250.0 lbs,"7'2.00""",,9.5
+basketball_test_missing,203.2,,,SF,Test Player 3,"6'8.00""",,"6'11.00""",9.0,
+basketball_test_missing,,,,SG,Test Player 4,,,"6'8.00""",8.5,9.25
+basketball_test_missing,208.28,99.79024,23.003447553593496,PF,Test Player 5,"6'10.00""",220.0 lbs,,,10.0

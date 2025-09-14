@@ -1,258 +1,317 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { BodyMeasurements, BodyPart } from '@/types';
-import { bodyParts } from '@/utils/similarity';
+import { useState, useEffect } from 'react';
+import { BodyMeasurements } from '@/types';
+
+// Import SVG assets as React components
+import HeadSVG from '@/assets/head.svg';
+import TorsoSVG from '@/assets/torso.svg';
+import LeftHandSVG from '@/assets/left-hand.svg';
+import RightHandSVG from '@/assets/right-hand.svg';
+import LeftShoulderSVG from '@/assets/left-shoulder.svg';
+import RightShoulderSVG from '@/assets/right-shoulder.svg';
+import TrunksSVG from '@/assets/trunks.svg';
+import LegsSVG from '@/assets/legs.svg';
 
 interface BodySilhouetteProps {
   measurements: BodyMeasurements;
   onMeasurementChange: (key: keyof BodyMeasurements, value: number) => void;
+  activeField?: keyof BodyMeasurements | null;
 }
 
-export default function BodySilhouette({ measurements, onMeasurementChange }: BodySilhouetteProps) {
-  const [activePart, setActivePart] = useState<string | null>(null);
-  const [showInput, setShowInput] = useState(false);
+export default function BodySilhouette({ measurements, onMeasurementChange, activeField }: BodySilhouetteProps) {
+  const [hoveredPart, setHoveredPart] = useState<string | null>(null);
 
-  const handlePartClick = (part: BodyPart) => {
-    setActivePart(part.id);
-    setShowInput(true);
+  // Determine which body parts should be highlighted based on active field
+  const getHighlightedParts = () => {
+    if (!activeField) return [];
+    
+    switch (activeField) {
+      case 'height':
+        return ['head', 'torso', 'trunks', 'legs'];
+      case 'wingspan':
+        return ['leftShoulder', 'rightShoulder', 'leftHand', 'rightHand'];
+      case 'shoulderWidth':
+        return ['leftShoulder', 'rightShoulder'];
+      case 'waist':
+        return ['trunks'];
+      case 'hip':
+        return ['trunks'];
+      case 'weight':
+        return []; // No highlighting for weight
+      default:
+        return [];
+    }
   };
 
-  const handleInputSubmit = (value: string) => {
-    if (activePart) {
-      const part = bodyParts.find(p => p.id === activePart);
-      if (part && !isNaN(Number(value))) {
-        onMeasurementChange(part.measurement, Number(value));
-      }
+  // Determine which body parts should glow green based on completed measurements
+  const getCompletedParts = () => {
+    const completed: string[] = [];
+    
+    if (measurements.height && measurements.height > 0) {
+      completed.push('head', 'torso', 'trunks', 'legs');
     }
-    setShowInput(false);
-    setActivePart(null);
+    if (measurements.wingspan && measurements.wingspan > 0) {
+      completed.push('leftShoulder', 'rightShoulder', 'leftHand', 'rightHand');
+    }
+    if (measurements.shoulderWidth && measurements.shoulderWidth > 0) {
+      completed.push('leftShoulder', 'rightShoulder');
+    }
+    if (measurements.waist && measurements.waist > 0) {
+      completed.push('trunks');
+    }
+    if (measurements.hip && measurements.hip > 0) {
+      completed.push('trunks');
+    }
+    
+    return completed;
+  };
+
+  const highlightedParts = getHighlightedParts();
+  const completedParts = getCompletedParts();
+
+  // Helper function to get highlight styles
+  const getHighlightStyle = (partName: string) => {
+    const isCompleted = completedParts.includes(partName);
+    const isHighlighted = highlightedParts.includes(partName);
+    
+    if (isCompleted) {
+      // Green glow for completed measurements
+      return {
+        filter: 'drop-shadow(0 0 20px rgba(0, 255, 136, 0.9)) brightness(1.4)',
+        opacity: 1,
+      };
+    } else if (isHighlighted) {
+      // Blue highlight for active field
+      return {
+        filter: 'drop-shadow(0 0 15px rgba(0, 212, 255, 0.8)) brightness(1.2)',
+        opacity: 1,
+      };
+    } else {
+      // Dimmed state for empty fields
+      return {
+        filter: 'drop-shadow(0 0 5px rgba(0, 212, 255, 0.2))',
+        opacity: 0.3,
+      };
+    }
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto">
-      {/* Body Silhouette SVG */}
-      <div className="relative">
-        <svg
-          viewBox="0 0 120 200"
-          className="w-full h-auto max-h-96"
-          style={{ filter: 'drop-shadow(0 0 20px rgba(0, 245, 255, 0.3))' }}
+    <div className="relative w-full max-w-lg mx-auto">
+      {/* Human Figure using SVG assets */}
+      <div className="relative flex flex-col items-center">
+        <div 
+          className="relative"
+          style={{ 
+            width: '300px', 
+            height: '500px',
+            filter: 'drop-shadow(0 0 20px rgba(0, 245, 255, 0.3))'
+          }}
         >
-          {/* Body outline */}
-          <motion.path
-            d="M60 10 C50 10, 45 15, 45 25 L45 35 C45 40, 50 45, 60 45 C70 45, 75 40, 75 35 L75 25 C75 15, 70 10, 60 10 Z"
-            fill="none"
-            stroke="#00f5ff"
-            strokeWidth="2"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 2 }}
-          />
-          
-          {/* Head */}
-          <motion.circle
-            cx="60"
-            cy="20"
-            r="8"
-            fill="none"
-            stroke="#00f5ff"
-            strokeWidth="2"
-            className="cursor-pointer hover:stroke-neon-green transition-colors duration-300"
-            onClick={() => handlePartClick(bodyParts[0])}
-            whileHover={{ scale: 1.1, stroke: "#39ff14" }}
-            whileTap={{ scale: 0.95 }}
-          />
-
-          {/* Torso */}
-          <motion.rect
-            x="50"
-            y="30"
-            width="20"
-            height="40"
-            fill="none"
-            stroke="#00f5ff"
-            strokeWidth="2"
-            className="cursor-pointer hover:stroke-neon-green transition-colors duration-300"
-            onClick={() => handlePartClick(bodyParts[2])}
-            whileHover={{ scale: 1.05, stroke: "#39ff14" }}
-            whileTap={{ scale: 0.95 }}
-          />
-
-          {/* Arms */}
-          <motion.path
-            d="M50 35 L35 50 L40 55 L55 40 Z"
-            fill="none"
-            stroke="#00f5ff"
-            strokeWidth="2"
-            className="cursor-pointer hover:stroke-neon-green transition-colors duration-300"
-            onClick={() => handlePartClick(bodyParts[3])}
-            whileHover={{ scale: 1.05, stroke: "#39ff14" }}
-            whileTap={{ scale: 0.95 }}
-          />
-          <motion.path
-            d="M70 35 L85 50 L80 55 L65 40 Z"
-            fill="none"
-            stroke="#00f5ff"
-            strokeWidth="2"
-            className="cursor-pointer hover:stroke-neon-green transition-colors duration-300"
-            onClick={() => handlePartClick(bodyParts[3])}
-            whileHover={{ scale: 1.05, stroke: "#39ff14" }}
-            whileTap={{ scale: 0.95 }}
-          />
-
-          {/* Waist */}
-          <motion.rect
-            x="52"
-            y="60"
-            width="16"
-            height="8"
-            fill="none"
-            stroke="#00f5ff"
-            strokeWidth="2"
-            className="cursor-pointer hover:stroke-neon-green transition-colors duration-300"
-            onClick={() => handlePartClick(bodyParts[4])}
-            whileHover={{ scale: 1.05, stroke: "#39ff14" }}
-            whileTap={{ scale: 0.95 }}
-          />
-
-          {/* Hips */}
-          <motion.rect
-            x="50"
-            y="68"
-            width="20"
-            height="12"
-            fill="none"
-            stroke="#00f5ff"
-            strokeWidth="2"
-            className="cursor-pointer hover:stroke-neon-green transition-colors duration-300"
-            onClick={() => handlePartClick(bodyParts[5])}
-            whileHover={{ scale: 1.05, stroke: "#39ff14" }}
-            whileTap={{ scale: 0.95 }}
-          />
-
-          {/* Legs */}
-          <motion.rect
-            x="55"
-            y="80"
-            width="10"
-            height="40"
-            fill="none"
-            stroke="#00f5ff"
-            strokeWidth="2"
-            className="cursor-pointer hover:stroke-neon-green transition-colors duration-300"
-            onClick={() => handlePartClick(bodyParts[6])}
-            whileHover={{ scale: 1.05, stroke: "#39ff14" }}
-            whileTap={{ scale: 0.95 }}
-          />
-
-          {/* Feet */}
-          <motion.ellipse
-            cx="60"
-            cy="125"
-            rx="8"
-            ry="4"
-            fill="none"
-            stroke="#00f5ff"
-            strokeWidth="2"
-          />
-        </svg>
-
-        {/* Interactive Labels */}
-        {bodyParts.map((part, index) => (
+          {/* Head - positioned at the top */}
           <motion.div
-            key={part.id}
-            className="absolute text-xs font-montserrat text-neon-blue opacity-0 hover:opacity-100 transition-opacity duration-300"
+            className="absolute"
             style={{
-              left: `${part.position.x}%`,
-              top: `${part.position.y}%`,
-              transform: 'translate(-50%, -50%)'
+              top: '0px',
+              left: '98px',
+              transform: 'translateX(-50%)',
+              width: '120px',
+              height: '125px',
             }}
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
+            initial={{ scale: 0, y: -20 }}
+            animate={{ scale: 0.6, y: 0 }}
+            transition={{ duration: 0.8, delay: 0 }}
           >
-            {part.name}
+            <HeadSVG 
+              style={{
+                width: '100%',
+                height: '100%',
+                ...getHighlightStyle('head')
+              }}
+            />
           </motion.div>
-        ))}
-      </div>
 
-      {/* Input Modal */}
-      {showInput && activePart && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          onClick={() => setShowInput(false)}
-        >
+          {/* Left Shoulder - positioned on the left side of torso */}
           <motion.div
-            className="card p-6 max-w-sm mx-4"
-            onClick={(e) => e.stopPropagation()}
+            className="absolute"
+            style={{
+              top: '60px',
+              left: '0px',
+              width: '200px',
+              height: '200px',
+            }}
+            initial={{ scale: 0, x: -20 }}
+            animate={{ scale: 0.5, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h3 className="text-xl font-montserrat font-bold mb-4 text-neon-blue">
-              {bodyParts.find(p => p.id === activePart)?.name} Measurement
-            </h3>
-            <p className="text-gray-400 mb-4">
-              {bodyParts.find(p => p.id === activePart)?.description}
-            </p>
-            <div className="space-y-4">
-              <input
-                type="number"
-                placeholder="Enter measurement"
-                className="input-field w-full"
-                autoFocus
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleInputSubmit((e.target as HTMLInputElement).value);
-                  }
-                }}
-              />
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowInput(false)}
-                  className="btn-secondary flex-1"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    const input = document.querySelector('input[type="number"]') as HTMLInputElement;
-                    if (input) handleInputSubmit(input.value);
-                  }}
-                  className="btn-primary flex-1"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
+            <LeftShoulderSVG 
+              style={{
+                width: '100%',
+                height: '100%',
+                ...getHighlightStyle('leftShoulder')
+              }}
+            />
           </motion.div>
-        </motion.div>
-      )}
 
-      {/* Current Measurements Display */}
-      <div className="mt-6 space-y-2">
-        <h4 className="text-lg font-montserrat font-bold text-neon-green mb-3">
-          Your Measurements
-        </h4>
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-400">Height:</span>
-            <span className="text-white">{measurements.height || 0} cm</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Weight:</span>
-            <span className="text-white">{measurements.weight || 0} kg</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Wingspan:</span>
-            <span className="text-white">{measurements.wingspan || 0} cm</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400">Shoulders:</span>
-            <span className="text-white">{measurements.shoulderWidth || 0} cm</span>
-          </div>
+          {/* Right Shoulder - positioned on the right side of torso */}
+          <motion.div
+            className="absolute"
+            style={{
+              top: '60px',
+              right: '-50px',
+              width: '200px',
+              height: '200px',
+            }}
+            initial={{ scale: 0, x: 20 }}
+            animate={{ scale: 0.5, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <RightShoulderSVG 
+              style={{
+                width: '100%',
+                height: '100%',
+                ...getHighlightStyle('rightShoulder')
+              }}
+            />
+          </motion.div>
+
+          {/* Torso - positioned in the center */}
+          <motion.div
+            className="absolute"
+            style={{
+              top: '50px',
+              left: '70px',
+              transform: 'translateX(-50%)',
+              width: '200px',
+              height: '240px',
+            }}
+            initial={{ scale: 0, y: 20 }}
+            animate={{ scale: 0.5, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <TorsoSVG 
+              style={{
+                width: '100%',
+                height: '100%',
+                ...getHighlightStyle('torso')
+              }}
+            />
+          </motion.div>
+
+          {/* Left Hand - extending from left shoulder */}
+          <motion.div
+            className="absolute"
+            style={{
+              top: '124px',
+              left: '-25px',
+              width: '160px',
+              height: '250px',
+            }}
+            initial={{ scale: 0, x: -30, rotate: -10 }}
+            animate={{ scale: 0.5, x: 0, rotate: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <LeftHandSVG 
+              style={{
+                width: '100%',
+                height: '100%',
+                ...getHighlightStyle('leftHand')
+              }}
+            />
+          </motion.div>
+
+          {/* Right Hand - extending from right shoulder */}
+          <motion.div
+            className="absolute"
+            style={{
+              top: '124px',
+              right: '-45px',
+              width: '160px',
+              height: '250px',
+            }}
+            initial={{ scale: 0, x: 30, rotate: 10 }}
+            animate={{ scale: 0.5, x: 0, rotate: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <RightHandSVG 
+              style={{
+                width: '100%',
+                height: '100%',
+                ...getHighlightStyle('rightHand')
+              }}
+            />
+          </motion.div>
+
+          {/* Trunks (waist/hips area) - positioned below torso */}
+          <motion.div
+            className="absolute"
+            style={{
+              top: '190px',
+              left: '65px',
+              transform: 'translateX(-50%)',
+              width: '190px',
+              height: '170px',
+            }}
+            initial={{ scale: 0, y: 20 }}
+            animate={{ scale: 0.5, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+          >
+            <TrunksSVG 
+              style={{
+                width: '100%',
+                height: '100%',
+                ...getHighlightStyle('trunks')
+              }}
+            />
+          </motion.div>
+
+          {/* Legs - positioned below trunks */}
+          <motion.div
+            className="absolute"
+            style={{
+              top: '230px',
+              left: '67px',
+              transform: 'translateX(-50%)',
+              width: '180px',
+              height: '320px',
+            }}
+            initial={{ scale: 0, y: 30 }}
+            animate={{ scale: 0.5, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.0 }}
+          >
+            <LegsSVG 
+              style={{
+                width: '100%',
+                height: '100%',
+                ...getHighlightStyle('legs')
+              }}
+            />
+          </motion.div>
         </div>
       </div>
+
+
+      {/* Measurement Guide */}
+      {activeField && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-6 p-4 bg-gray-800/50 rounded-xl border border-blue-400/30"
+        >
+          <h4 className="text-blue-400 font-bold text-lg mb-2">
+            {activeField.charAt(0).toUpperCase() + activeField.slice(1)} Measurement
+          </h4>
+          <p className="text-gray-300 font-bold text-sm">
+            {activeField === 'height' && "Measure from the top of your head to the bottom of your feet"}
+            {activeField === 'weight' && "Step on a scale to measure your body weight"}
+            {activeField === 'wingspan' && "Stretch your arms out horizontally and measure fingertip to fingertip"}
+            {activeField === 'shoulderWidth' && "Measure across your shoulders from the outside edge of one shoulder to the other"}
+            {activeField === 'waist' && "Measure around the narrowest part of your torso, usually just above your belly button"}
+            {activeField === 'hip' && "Measure around the widest part of your hips, usually at the level of your hip bones"}
+          </p>
+        </motion.div>
+      )}
     </div>
   );
 }

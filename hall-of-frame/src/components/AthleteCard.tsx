@@ -20,16 +20,16 @@ export default function AthleteCard({ match, index }: AthleteCardProps) {
       whileHover={{ scale: 1.02, y: -5 }}
       className="card card-hover p-6 relative overflow-hidden"
     >
-      {/* Similarity Score Badge */}
-      <div className="absolute top-4 right-4">
-        <div className="bg-gradient-to-r from-neon-blue to-neon-green text-dark-bg px-3 py-1 rounded-full text-sm font-bold">
-          {Math.round(similarityScore)}% Match
-        </div>
-      </div>
 
-      {/* Athlete Image Placeholder */}
+      {/* Athlete Image Placeholder with Gender Emoji */}
       <div className="w-20 h-20 bg-gradient-to-br from-neon-blue/20 to-neon-green/20 rounded-full mx-auto mb-4 flex items-center justify-center">
-        <Trophy className="text-neon-blue" size={32} />
+        <span className={`text-3xl ${
+          athlete.gender_emoji === '♂️' ? 'text-blue-500' : 
+          athlete.gender_emoji === '♀️' ? 'text-pink-500' : 
+          'text-gray-400'
+        }`}>
+          {athlete.gender_emoji || '⚥'}
+        </span>
       </div>
 
       {/* Athlete Info */}
@@ -87,29 +87,6 @@ export default function AthleteCard({ match, index }: AthleteCardProps) {
         </div>
       )}
 
-      {/* Achievements */}
-      {athlete.achievements && athlete.achievements.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Award className="text-neon-blue" size={16} />
-            <span className="text-sm font-montserrat font-medium text-neon-blue">
-              Key Achievements
-            </span>
-          </div>
-          <div className="space-y-1">
-            {athlete.achievements.slice(0, 2).map((achievement, idx) => (
-              <div key={idx} className="text-xs text-gray-400">
-                • {achievement}
-              </div>
-            ))}
-            {athlete.achievements.length > 2 && (
-              <div className="text-xs text-neon-blue">
-                +{athlete.achievements.length - 2} more...
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </motion.div>
   );
 }

@@ -161,42 +161,7 @@ export default function LoadingPage() {
           </span>
         </motion.div>
 
-        {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4"
-        >
-          <motion.div
-            className="card p-6 text-center"
-            whileHover={{ scale: 1.1, y: -5 }}
-          >
-            <div className="text-2xl font-oswald text-neon-blue mb-1">50+</div>
-            <div className="text-xs text-gray-400 font-oswald">Athletes</div>
-          </motion.div>
-          <motion.div
-            className="card p-6 text-center"
-            whileHover={{ scale: 1.1, y: -5 }}
-          >
-            <div className="text-2xl font-oswald text-neon-green mb-1">8</div>
-            <div className="text-xs text-gray-400 font-oswald">Sports</div>
-          </motion.div>
-          <motion.div
-            className="card p-6 text-center"
-            whileHover={{ scale: 1.1, y: -5 }}
-          >
-            <div className="text-2xl font-oswald text-neon-gold mb-1">6</div>
-            <div className="text-xs text-gray-400 font-oswald">Measurements</div>
-          </motion.div>
-          <motion.div
-            className="card p-6 text-center"
-            whileHover={{ scale: 1.1, y: -5 }}
-          >
-            <div className="text-2xl font-oswald text-neon-blue mb-1">95%</div>
-            <div className="text-xs text-gray-400 font-oswald">Accuracy</div>
-          </motion.div>
-        </motion.div>
+        
 
         {/* Animated Background Elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
