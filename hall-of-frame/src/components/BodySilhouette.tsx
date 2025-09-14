@@ -29,15 +29,17 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
     
     switch (activeField) {
       case 'height':
-        return ['head', 'torso', 'legs'];
+        return ['head', 'torso', 'trunks', 'legs'];
       case 'wingspan':
-        return ['leftHand', 'rightHand'];
+        return ['leftShoulder', 'rightShoulder', 'leftHand', 'rightHand'];
       case 'shoulderWidth':
         return ['leftShoulder', 'rightShoulder'];
       case 'waist':
         return ['trunks'];
       case 'hip':
         return ['trunks'];
+      case 'weight':
+        return []; // No highlighting for weight
       default:
         return [];
     }
@@ -73,7 +75,7 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
             className="absolute"
             style={{
               top: '0px',
-              left: '148px',
+              left: '98px',
               transform: 'translateX(-50%)',
               width: '120px',
               height: '125px',
@@ -96,7 +98,7 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
             className="absolute"
             style={{
               top: '60px',
-              left: '50px',
+              left: '0px',
               width: '200px',
               height: '200px',
             }}
@@ -118,7 +120,7 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
             className="absolute"
             style={{
               top: '60px',
-              right: '-100px',
+              right: '-50px',
               width: '200px',
               height: '200px',
             }}
@@ -140,7 +142,7 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
             className="absolute"
             style={{
               top: '50px',
-              left: '120px',
+              left: '70px',
               transform: 'translateX(-50%)',
               width: '200px',
               height: '240px',
@@ -163,7 +165,7 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
             className="absolute"
             style={{
               top: '124px',
-              left: '25px',
+              left: '-25px',
               width: '160px',
               height: '250px',
             }}
@@ -185,7 +187,7 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
             className="absolute"
             style={{
               top: '124px',
-              right: '-95px',
+              right: '-45px',
               width: '160px',
               height: '250px',
             }}
@@ -207,7 +209,7 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
             className="absolute"
             style={{
               top: '190px',
-              left: '115px',
+              left: '65px',
               transform: 'translateX(-50%)',
               width: '190px',
               height: '170px',
@@ -230,7 +232,7 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
             className="absolute"
             style={{
               top: '230px',
-              left: '117px',
+              left: '67px',
               transform: 'translateX(-50%)',
               width: '180px',
               height: '320px',
@@ -250,42 +252,6 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
         </div>
       </div>
 
-      {/* Weight Scale (Abstract) */}
-      {activeField === 'weight' && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8 text-center"
-        >
-          <div className="relative w-32 h-16 mx-auto">
-            {/* Scale Base */}
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-24 h-4 bg-gradient-to-r from-blue-400 to-pink-400 rounded-full"></div>
-            
-            {/* Scale Platform */}
-            <motion.div
-              className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-gradient-to-r from-green-400 to-orange-400 rounded-full"
-              animate={{ 
-                y: [0, -5, 0],
-                scale: [1, 1.05, 1]
-              }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            ></motion.div>
-            
-            {/* Weight Value Display */}
-            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-green-400 font-bold text-lg">
-              {measurements.weight || 0}kg
-            </div>
-          </div>
-          
-          <p className="text-gray-400 font-bold text-sm mt-2">
-            Body Weight Scale
-          </p>
-        </motion.div>
-      )}
 
       {/* Measurement Guide */}
       {activeField && (
