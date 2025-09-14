@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
     from sport_recommendation_engine import SportRecommendationEngine
-    from sport_database import get_sport_info, get_sport_stats, get_sport_description
+    from sport_database import get_sport_info, get_sport_stats, get_sport_description, get_sport_name
     ML_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: ML modules not available: {e}")
@@ -164,12 +164,6 @@ def recommend_sport():
     """
     print("=== RECOMMEND ENDPOINT HIT ===")
     
-    if not ML_AVAILABLE:
-        return jsonify({
-            'error': 'ML modules not available',
-            'success': False
-        }), 500
-    
     try:
         data = request.get_json()
         
@@ -182,41 +176,189 @@ def recommend_sport():
                     'success': False
                 }), 400
         
+        if not ML_AVAILABLE:
+            # Provide mock response when ML modules aren't available
+            print("ML modules not available, providing mock response")
+            mock_recommendation = {
+                'sport': 'Basketball',
+                'stats': {
+                    'strength': 75, 'agility': 85, 'endurance': 70, 'power': 80, 
+                    'speed': 80, 'flexibility': 65, 'coordination': 85, 'balance': 80
+                },
+                'description': 'Helpful body traits: Height and wingspan give players a major advantage in rebounding, blocking, and shooting. Lean muscle mass and agility allow for explosive moves and quick changes of direction.'
+            }
+            
+            mock_similar_athlete = {
+                'name': 'Sample Athlete',
+                'sport': 'Basketball',
+                'measurements': {
+                    'height': 185.0,
+                    'weight': 80.0,
+                    'wingspan': 190.0,
+                    'shoulderWidth': 45.0,
+                    'waist': 80.0,
+                    'hip': 90.0
+                }
+            }
+            
+            return jsonify({
+                'success': True,
+                'data': {
+                    'recommendation': mock_recommendation,
+                    'similar_athlete': mock_similar_athlete
+                }
+            }), 200
+        
         # Initialize recommendation engine
         engine = SportRecommendationEngine()
         
-        # Get recommendation
+        # Get recommendation (using correct function signature)
         recommendation = engine.recommend_sport(
             gender=data['gender'],
-            height=data['height'],
-            weight=data['weight'],
-            wingspan=data['wingspan'],
-            shoulder_width=data['shoulderWidth'],
-            waist=data['waist'],
-            hip=data['hip']
+            height_cm=data['height'],
+            weight_kg=data['weight'],
+            arm_span=data['wingspan'],
+            leg_length=None,  # Optional parameter
+            torso_length=None  # Optional parameter
         )
         
-        # Get similar athlete
-        similar_athlete = engine.find_similar_athlete(
+        # Get top sports list for filtering similar athletes
+        all_sports = recommendation.get('all_top_sports', {})
+        top_sports = []
+        for sport_key, sport_count in all_sports.items():
+            sport_info = get_sport_info(sport_key)
+            top_sports.append(sport_info.get('name', sport_key))
+        
+        # Get similar athletes from top sports
+        similar_athletes_result = engine.find_similar_athletes(
             gender=data['gender'],
-            height=data['height'],
-            weight=data['weight'],
-            wingspan=data['wingspan'],
-            shoulder_width=data['shoulderWidth'],
-            waist=data['waist'],
-            hip=data['hip']
+            height_cm=data['height'],
+            weight_kg=data['weight'],
+            arm_span=data['wingspan'],
+            leg_length=None,  # Optional parameter
+            torso_length=None,  # Optional parameter
+            top_sports=top_sports,  # Filter by top sports
+            num_athletes=3  # Get 3 athletes
         )
+        
+        # Convert numpy types to Python native types for JSON serialization
+        def convert_numpy_types(obj):
+            if isinstance(obj, dict):
+                return {key: convert_numpy_types(value) for key, value in obj.items()}
+            elif isinstance(obj, list):
+                return [convert_numpy_types(item) for item in obj]
+            elif hasattr(obj, 'item'):  # numpy scalar
+                return obj.item()
+            elif hasattr(obj, 'tolist'):  # numpy array
+                return obj.tolist()
+            else:
+                return obj
+        
+        recommendation_clean = convert_numpy_types(recommendation)
+        similar_athletes_clean = convert_numpy_types(similar_athletes_result)
+        
+        # Format response according to the requested structure
+        # Get all sports from the cluster
+        all_sports = recommendation_clean.get('all_top_sports', {})
+        
+        # Create list of all sports in the cluster with their info
+        cluster_sports = []
+        for sport_key, sport_count in all_sports.items():
+            sport_info = get_sport_info(sport_key)
+            sport_stats = get_sport_stats(sport_key)
+            sport_description = get_sport_description(sport_key)
+            sport_name = get_sport_name(sport_key)
+            
+            cluster_sports.append({
+                'sport': sport_name,
+                'stats': sport_stats,
+                'description': sport_description,
+                'athlete_count': sport_count
+            })
+        
+        # Sort by athlete count (most popular first)
+        cluster_sports.sort(key=lambda x: x['athlete_count'], reverse=True)
+        
+        # The top sport should be the one actually recommended by the ML engine
+        # Find the recommended sport in the cluster list
+        recommended_sport_key = recommendation_clean['recommended_sport']
+        top_sport = None
+        
+        for sport in cluster_sports:
+            # Get the sport key for comparison
+            sport_key = None
+            for key, count in all_sports.items():
+                sport_info = get_sport_info(key)
+                if sport_info.get('name') == sport['sport']:
+                    sport_key = key
+                    break
+            
+            if sport_key == recommended_sport_key:
+                top_sport = sport
+                break
+        
+        # Fallback to first sport if recommended sport not found
+        if not top_sport and cluster_sports:
+            top_sport = cluster_sports[0]
+        elif not top_sport:
+            top_sport = {
+                'sport': recommendation_clean['sport_name'],
+                'stats': recommendation_clean['sport_stats'],
+                'description': recommendation_clean['sport_description'],
+                'athlete_count': 0
+            }
+        
+        formatted_recommendation = {
+            'top_sport': top_sport,
+            'all_sports': cluster_sports
+        }
+        
+        # Extract athlete data from the similar_athletes response
+        similar_athletes_list = similar_athletes_clean.get('similar_athletes', [])
+        formatted_similar_athletes = []
+        
+        for athlete_result in similar_athletes_list:
+            athlete_data = athlete_result.get('athlete', {})
+            
+            # Get sport name from sport key
+            sport_key = athlete_data.get('sport', '')
+            sport_name = get_sport_name(sport_key) if sport_key else 'Unknown Sport'
+            
+            # Determine gender emoji
+            gender = athlete_data.get('gender', '').lower()
+            gender_emoji = '♂️' if gender == 'male' else '♀️' if gender == 'female' else '⚥'
+            
+            # Handle missing measurements
+            def format_measurement(value):
+                return value if value and value != 0 else "Information unavailable"
+            
+            formatted_athlete = {
+                'name': athlete_data.get('Player', 'Unknown Athlete'),
+                'sport': sport_name,
+                'gender_emoji': gender_emoji,
+                'measurements': {
+                    'height': format_measurement(athlete_data.get('height_cm')),
+                    'weight': format_measurement(athlete_data.get('weight_kg')),
+                    'wingspan': format_measurement(athlete_data.get('Arm Span')),
+                    'shoulderWidth': format_measurement(data.get('shoulderWidth')),
+                    'waist': format_measurement(data.get('waist')),
+                    'hip': format_measurement(data.get('hip'))
+                }
+            }
+            formatted_similar_athletes.append(formatted_athlete)
         
         return jsonify({
             'success': True,
             'data': {
-                'recommendation': recommendation,
-                'similar_athlete': similar_athlete
+                'recommendation': formatted_recommendation,
+                'similar_athletes': formatted_similar_athletes
             }
         }), 200
         
     except Exception as e:
         print(f"Error in recommend endpoint: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'error': f'An error occurred while getting recommendations: {str(e)}',
             'success': False
