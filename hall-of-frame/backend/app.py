@@ -98,7 +98,7 @@ def upload_image():
             
             mock_measurements = {
                 'height': round(random.uniform(160, 190), 1),
-                'weight': round(random.uniform(60, 90), 1), 
+                'weight': 0, 
                 'wingspan': round(random.uniform(160, 200), 1),
                 'shoulderWidth': round(random.uniform(35, 50), 1),
                 'waist': round(random.uniform(70, 100), 1),

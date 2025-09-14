@@ -45,17 +45,56 @@ export default function BodySilhouette({ measurements, onMeasurementChange, acti
     }
   };
 
+  // Determine which body parts should glow green based on completed measurements
+  const getCompletedParts = () => {
+    const completed: string[] = [];
+    
+    if (measurements.height && measurements.height > 0) {
+      completed.push('head', 'torso', 'trunks', 'legs');
+    }
+    if (measurements.wingspan && measurements.wingspan > 0) {
+      completed.push('leftShoulder', 'rightShoulder', 'leftHand', 'rightHand');
+    }
+    if (measurements.shoulderWidth && measurements.shoulderWidth > 0) {
+      completed.push('leftShoulder', 'rightShoulder');
+    }
+    if (measurements.waist && measurements.waist > 0) {
+      completed.push('trunks');
+    }
+    if (measurements.hip && measurements.hip > 0) {
+      completed.push('trunks');
+    }
+    
+    return completed;
+  };
+
   const highlightedParts = getHighlightedParts();
+  const completedParts = getCompletedParts();
 
   // Helper function to get highlight styles
   const getHighlightStyle = (partName: string) => {
+    const isCompleted = completedParts.includes(partName);
     const isHighlighted = highlightedParts.includes(partName);
-    return {
-      filter: isHighlighted 
-        ? 'drop-shadow(0 0 15px rgba(0, 255, 136, 0.8)) brightness(1.2)' 
-        : 'drop-shadow(0 0 10px rgba(0, 212, 255, 0.5))',
-      opacity: isHighlighted ? 1 : 0.8,
-    };
+    
+    if (isCompleted) {
+      // Green glow for completed measurements
+      return {
+        filter: 'drop-shadow(0 0 20px rgba(0, 255, 136, 0.9)) brightness(1.4)',
+        opacity: 1,
+      };
+    } else if (isHighlighted) {
+      // Blue highlight for active field
+      return {
+        filter: 'drop-shadow(0 0 15px rgba(0, 212, 255, 0.8)) brightness(1.2)',
+        opacity: 1,
+      };
+    } else {
+      // Dimmed state for empty fields
+      return {
+        filter: 'drop-shadow(0 0 5px rgba(0, 212, 255, 0.2))',
+        opacity: 0.3,
+      };
+    }
   };
 
   return (

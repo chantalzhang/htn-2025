@@ -86,7 +86,7 @@ export default function InputPage() {
       const field = key as keyof BodyMeasurements;
       const range = validationRanges[field];
       
-      if (value > 0 && (value < range.min || value > range.max)) {
+      if (value === 0 || (value > 0 && (value < range.min || value > range.max))) {
         return false; // Found an out-of-range measurement
       }
     }
@@ -257,7 +257,7 @@ export default function InputPage() {
                   <p className="text-text-secondary font-oswald">
                     {backendConnected === false 
                       ? "Will be processed locally (backend offline)"
-                      : "Will be uploaded for enhanced analysis"
+                      : "Measurements extracted"
                     }
                   </p>
                 </div>
@@ -331,7 +331,6 @@ export default function InputPage() {
                     className="input-field w-full pl-10"
                     placeholder="Enter your height"
                   />
-                  <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -350,7 +349,6 @@ export default function InputPage() {
                     className="input-field w-full pl-10"
                     placeholder="Enter your weight"
                   />
-                  <Weight className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -369,7 +367,6 @@ export default function InputPage() {
                     className="input-field w-full pl-10"
                     placeholder="Enter your wingspan"
                   />
-                  <Target className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -388,7 +385,6 @@ export default function InputPage() {
                     className="input-field w-full pl-10"
                     placeholder="Enter your shoulder width"
                   />
-                  <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -407,7 +403,6 @@ export default function InputPage() {
                     className="input-field w-full pl-10"
                     placeholder="Enter your waist measurement"
                   />
-                  <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
 
@@ -426,7 +421,6 @@ export default function InputPage() {
                     className="input-field w-full pl-10"
                     placeholder="Enter your hip measurement"
                   />
-                  <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 </div>
               </div>
             </div>

@@ -110,6 +110,24 @@ export default function ResultsPage() {
         <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-gradient-radial from-neon-pink/15 to-transparent rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-radial from-neon-green/10 to-transparent rounded-full blur-2xl"></div>
       </div>
+
+      {/* Background PNG layer */}
+      <div
+          className="
+            absolute inset-0 pointer-events-none select-none
+            opacity-60             /* transparency */
+            bg-[url('/images/marathon.png')]
+            bg-no-repeat bg-contain md:bg-cover bg-center
+            blur-sm
+            saturate-125 contrast-110
+          "
+          style={{
+            backgroundSize: '400px 400px',  /* Fixed small size */
+            backgroundPosition: 'center',
+            top: '-2400px'
+          }}
+        />
+
       
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
