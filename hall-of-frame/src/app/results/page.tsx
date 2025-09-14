@@ -36,9 +36,9 @@ export default function ResultsPage() {
           height: measurements.height,
           weight: measurements.weight,
           wingspan: measurements.wingspan,
-          shoulderWidth: measurements.shoulderWidth,
-          waist: measurements.waist,
-          hip: measurements.hip
+          shoulderWidth: measurements.shoulderWidth || 0,
+          waist: measurements.waist || 0,
+          hip: measurements.hip || 0
         };
         
         console.log('Fetching recommendations from backend...');
