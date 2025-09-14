@@ -69,7 +69,7 @@ export default function SpiderChart({ stats, className = '' }: SpiderChartProps)
     if (!ctx) return;
 
     // Set canvas size
-    const size = 350;
+    const size = 400;
     canvas.width = size;
     canvas.height = size;
 
@@ -122,7 +122,7 @@ export default function SpiderChart({ stats, className = '' }: SpiderChartProps)
     
     for (let i = 0; i < statCount; i++) {
       const angle = i * angleStep - Math.PI / 2;
-      const labelRadius = radius + 30;
+      const labelRadius = radius + 40;
       const x = centerX + Math.cos(angle) * labelRadius;
       const y = centerY + Math.sin(angle) * labelRadius;
       
@@ -191,7 +191,7 @@ export default function SpiderChart({ stats, className = '' }: SpiderChartProps)
       <canvas
         ref={canvasRef}
         className="cursor-pointer"
-        style={{ maxWidth: '350px', maxHeight: '350px' }}
+        style={{ maxWidth: '400px', maxHeight: '400px' }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       />

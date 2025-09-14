@@ -354,7 +354,7 @@ export default function ResultsPage() {
           <div className="flex items-center gap-3 mb-6">
             <Gauge className="text-neon-orange" size={28} />
             <h2 className="text-3xl font-oswald text-neon-orange font-black">
-              YOUR ATHLETIC PROFILE
+              ATHLETIC PROFILE FOR {results.topSports[0]?.sport?.toUpperCase()}
             </h2>
           </div>
           
