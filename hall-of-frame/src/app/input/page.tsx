@@ -24,6 +24,7 @@ export default function InputPage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [backendConnected, setBackendConnected] = useState<boolean | null>(null);
   const [activeField, setActiveField] = useState<keyof BodyMeasurements | null>(null);
+  const [gender, setGender] = useState<string>('male');
 
   const handleMeasurementChange = (key: keyof BodyMeasurements, value: number) => {
     const numericValue = Number(value);
@@ -125,8 +126,9 @@ export default function InputPage() {
       setIsUploading(false);
     }
     
-    // Store measurements in localStorage for the loading and results pages
+    // Store measurements and gender in localStorage for the loading and results pages
     localStorage.setItem('userMeasurements', JSON.stringify(measurements));
+    localStorage.setItem('userGender', gender);
     
     // Check if measurements are within expected ranges
     if (validateMeasurements(measurements)) {
@@ -316,6 +318,37 @@ export default function InputPage() {
             </div>
 
             <div className="space-y-6">
+              {/* Gender Selection */}
+              <div>
+                <label className="block text-sm font-oswald font-bold text-text-secondary mb-3">
+                  Gender
+                </label>
+                <div className="flex space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="male"
+                      checked={gender === 'male'}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="mr-2 text-neon-pink"
+                    />
+                    <span className="text-text-secondary font-oswald">Male</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="female"
+                      checked={gender === 'female'}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="mr-2 text-neon-pink"
+                    />
+                    <span className="text-text-secondary font-oswald">Female</span>
+                  </label>
+                </div>
+              </div>
+
               {/* Height */}
               <div>
                 <label className="block text-sm font-oswald font-bold text-text-secondary mb-3">

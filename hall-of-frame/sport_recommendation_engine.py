@@ -12,7 +12,7 @@ from sklearn.metrics.pairwise import euclidean_distances
 import random
 import json
 from typing import Dict, List, Tuple, Optional
-from sport_database import get_sport_info, get_sport_stats, get_sport_description, get_sport_name
+from sport_database import get_sport_info, get_sport_stats, get_sport_description, get_sport_name, SPORT_DATABASE
 
 class SportRecommendationEngine:
     def __init__(self):
@@ -28,7 +28,21 @@ class SportRecommendationEngine:
     def load_and_preprocess_data(self):
         """Load and preprocess athlete data with enhanced feature engineering."""
         print("📊 Loading athlete dataset...")
-        self.df = pd.read_csv('athlete_dataset_pipeline/athlete_dataset_merged.csv')
+        # Try different paths for the dataset
+        import os
+        dataset_paths = [
+            'athlete_dataset_pipeline/athlete_dataset_merged.csv',
+            '../athlete_dataset_pipeline/athlete_dataset_merged.csv',
+            'hall-of-frame/athlete_dataset_pipeline/athlete_dataset_merged.csv'
+        ]
+        
+        for path in dataset_paths:
+            if os.path.exists(path):
+                self.df = pd.read_csv(path)
+                print(f"📊 Loaded dataset from: {path}")
+                break
+        else:
+            raise FileNotFoundError("Could not find athlete_dataset_merged.csv in any expected location")
         
         # Enhanced feature engineering for better body-type separation
         self.df['bmi'] = self.df['weight_kg'] / (self.df['height_cm'] / 100) ** 2
@@ -296,20 +310,21 @@ class SportRecommendationEngine:
         # Get athletes in the same cluster
         cluster_athletes = cluster_info['athletes']
         
-        # Filter by preferred sport if specified
-        if preferred_sport:
-            sport_athletes = [athlete for athlete in cluster_athletes if athlete['sport'] == preferred_sport]
-            if sport_athletes:
-                cluster_athletes = sport_athletes
+        # Determine which sport to filter by
+        target_sport = preferred_sport if preferred_sport else sport_rec['recommended_sport']
         
-        # If no athletes in preferred sport, use the recommended sport
-        if not cluster_athletes and preferred_sport:
-            recommended_sport = sport_rec['recommended_sport']
-            cluster_athletes = [athlete for athlete in cluster_info['athletes'] if athlete['sport'] == recommended_sport]
+        # Filter athletes by the target sport (recommended sport or preferred sport)
+        sport_athletes = [athlete for athlete in cluster_athletes if athlete['sport'] == target_sport]
         
-        # If still no athletes, use all athletes in cluster
-        if not cluster_athletes:
-            cluster_athletes = cluster_info['athletes']
+        # If we found athletes in the target sport, use them
+        if sport_athletes:
+            cluster_athletes = sport_athletes
+        else:
+            # If no athletes found in target sport, try to find athletes in similar sports
+            # or fall back to all athletes in cluster
+            print(f"Warning: No athletes found in sport '{target_sport}' in cluster {cluster_id}")
+            print(f"Available sports in cluster: {set(athlete['sport'] for athlete in cluster_athletes)}")
+            # Keep all athletes in cluster as fallback
             
         # Find most similar athlete by calculating distances
         min_distance = float('inf')
@@ -355,6 +370,90 @@ class SportRecommendationEngine:
                 'torso_length': torso_length
             }
         }
+    
+    def find_similar_athletes(self, gender: str, height_cm: float, weight_kg: float,
+                            arm_span: Optional[float] = None, leg_length: Optional[float] = None,
+                            torso_length: Optional[float] = None, 
+                            top_sports: Optional[list] = None, num_athletes: int = 3) -> list:
+        """Find multiple similar athletes from the top sports."""
+        try:
+            # Get sport recommendation first
+            sport_rec = self.recommend_sport(gender, height_cm, weight_kg, arm_span, leg_length, torso_length)
+            
+            # Get user features
+            user_features = self.get_user_features(gender, height_cm, weight_kg)
+            
+            # Get the appropriate model
+            if gender.lower() in ['m', 'male']:
+                model_key = 'male'
+            elif gender.lower() in ['f', 'female']:
+                model_key = 'female'
+            else:
+                model_key = 'combined'
+            
+            model = self.cluster_models[model_key]
+            user_scaled = model['scaler'].transform(user_features.reshape(1, -1))
+            
+            # Get cluster assignment
+            cluster_id = model['kmeans'].predict(user_scaled)[0]
+            
+            # Get cluster info and athletes
+            cluster_info = self.cluster_stats[model_key][cluster_id]
+            cluster_athletes = cluster_info['athletes']
+            
+            # Filter athletes by top sports if provided
+            if top_sports:
+                # Convert sport names to sport keys for comparison
+                sport_keys = []
+                for sport_name in top_sports:
+                    for key, info in SPORT_DATABASE.items():
+                        if info['name'] == sport_name:
+                            sport_keys.append(key)
+                            break
+                
+                # Filter athletes by these sports
+                filtered_athletes = []
+                for athlete in cluster_athletes:
+                    if athlete['sport'] in sport_keys:
+                        filtered_athletes.append(athlete)
+                
+                if filtered_athletes:
+                    cluster_athletes = filtered_athletes
+            
+            # Calculate distances for all athletes
+            athlete_distances = []
+            for athlete in cluster_athletes:
+                athlete_features = self.get_user_features(
+                    gender, athlete['height_cm'], athlete['weight_kg']
+                )
+                athlete_scaled = model['scaler'].transform(athlete_features.reshape(1, -1))
+                distance = euclidean_distances(user_scaled, athlete_scaled)[0][0]
+                athlete_distances.append((athlete, distance))
+            
+            # Sort by distance and get top athletes
+            athlete_distances.sort(key=lambda x: x[1])
+            top_athletes = athlete_distances[:num_athletes]
+            
+            # Format results
+            similar_athletes = []
+            for athlete, distance in top_athletes:
+                similarity_score = max(0, 100 - (distance * 10))  # Convert distance to percentage
+                
+                similar_athletes.append({
+                    'athlete': athlete,
+                    'similarity_score': similarity_score,
+                    'distance': distance
+                })
+            
+            return {
+                'similar_athletes': similar_athletes,
+                'cluster_id': cluster_id,
+                'total_athletes_considered': len(cluster_athletes)
+            }
+            
+        except Exception as e:
+            print(f"Error finding similar athletes: {e}")
+            return {'similar_athletes': [], 'error': str(e)}
 
 def main():
     """Test the recommendation engine."""

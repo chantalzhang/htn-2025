@@ -7,7 +7,7 @@ Contains descriptions and athletic stats for each sport.
 SPORT_DATABASE = {
     'basketball': {
         'name': 'Basketball',
-        'description': 'Helpful body traits: Height and wingspan give players a major advantage in rebounding, blocking, and shooting. Lean muscle mass and agility allow for explosive moves and quick changes of direction. Leg length relative to torso helps with stride efficiency and vertical jumping ability.',
+        'description': 'Height and wingspan give players a major advantage in rebounding, blocking, and shooting. Lean muscle mass and agility allow for explosive moves and quick changes of direction. Leg length relative to torso helps with stride efficiency and vertical jumping ability.',
         'stats': {
             'strength': 75,
             'agility': 85,
@@ -21,7 +21,7 @@ SPORT_DATABASE = {
     },
     'swimming': {
         'name': 'Swimming',
-        'description': 'Helpful body traits: A long torso improves buoyancy and stroke efficiency, while an arm span greater than height increases pulling power. Larger hands and feet act like natural paddles and fins. Having low but stable body fat helps with hydrodynamics and staying afloat efficiently.',
+        'description': 'A long torso improves buoyancy and stroke efficiency, while an arm span greater than height increases pulling power. Larger hands and feet act like natural paddles and fins. Having low but stable body fat helps with hydrodynamics and staying afloat efficiently.',
         'stats': {
             'strength': 70,
             'agility': 65,
@@ -35,7 +35,7 @@ SPORT_DATABASE = {
     },
     'gymnastics': {
         'name': 'Gymnastics',
-        'description': 'Helpful body traits: A compact body makes flips and spins easier to control. Strong shoulders and core provide the strength to hold bodyweight in difficult positions. Flexibility in the hips, spine, and shoulders is crucial for extreme ranges of motion.',
+        'description': 'A compact body makes flips and spins easier to control. Strong shoulders and core provide the strength to hold bodyweight in difficult positions. Flexibility in the hips, spine, and shoulders is crucial for extreme ranges of motion.',
         'stats': {
             'strength': 80,
             'agility': 95,
@@ -49,7 +49,7 @@ SPORT_DATABASE = {
     },
     'track_field': {
         'name': 'Sprint Running (100m/200m)',
-        'description': 'Helpful body traits: Fast-twitch muscle fibers drive acceleration and top-end speed. Optimal leg length provides long but quick strides. A lean body with well-distributed muscle mass maximizes the power-to-weight ratio for explosive sprinting.',
+        'description': 'Fast-twitch muscle fibers drive acceleration and top-end speed. Optimal leg length provides long but quick strides. A lean body with well-distributed muscle mass maximizes the power-to-weight ratio for explosive sprinting.',
         'stats': {
             'strength': 75,
             'agility': 70,
@@ -63,7 +63,7 @@ SPORT_DATABASE = {
     },
     'distance_running': {
         'name': 'Distance Running (Marathon)',
-        'description': 'Helpful body traits: A slim, lightweight frame increases running efficiency and oxygen use. Long legs relative to the torso create economical strides. High lung capacity and VO2 max are biological advantages. Thin calves and ankles reduce energy loss per stride.',
+        'description': 'A slim, lightweight frame increases running efficiency and oxygen use. Long legs relative to the torso create economical strides. High lung capacity and VO2 max are biological advantages. Thin calves and ankles reduce energy loss per stride.',
         'stats': {
             'strength': 55,
             'agility': 65,
@@ -77,7 +77,7 @@ SPORT_DATABASE = {
     },
     'soccer': {
         'name': 'Soccer',
-        'description': 'Helpful body traits: Balanced height and leg strength provide kicking power while supporting quick changes of direction. A strong core and hips improve stability during tackles and dribbles. High aerobic capacity supports covering large distances throughout a match.',
+        'description': 'Balanced height and leg strength provide kicking power while supporting quick changes of direction. A strong core and hips improve stability during tackles and dribbles. High aerobic capacity supports covering large distances throughout a match.',
         'stats': {
             'strength': 70,
             'agility': 85,
@@ -91,7 +91,7 @@ SPORT_DATABASE = {
     },
     'volleyball': {
         'name': 'Volleyball',
-        'description': 'Helpful body traits: Height and long arms are major advantages for spiking and blocking at the net. Explosive leg strength is critical for vertical jumping. Quick lateral movement is necessary for defensive plays and serve reception.',
+        'description': 'Height and long arms are major advantages for spiking and blocking at the net. Explosive leg strength is critical for vertical jumping. Quick lateral movement is necessary for defensive plays and serve reception.',
         'stats': {
             'strength': 70,
             'agility': 80,
@@ -105,7 +105,7 @@ SPORT_DATABASE = {
     },
     'weightlifting': {
         'name': 'Weightlifting',
-        'description': 'Helpful body traits: Shorter limbs relative to torso reduce the bar path distance and improve leverage. Strong wrists and ankles allow better load support. High muscle mass and density maximize absolute strength and force output.',
+        'description': 'Shorter limbs relative to torso reduce the bar path distance and improve leverage. Strong wrists and ankles allow better load support. High muscle mass and density maximize absolute strength and force output.',
         'stats': {
             'strength': 100,
             'agility': 60,
@@ -119,7 +119,7 @@ SPORT_DATABASE = {
     },
     'tennis': {
         'name': 'Tennis',
-        'description': 'Helpful body traits: Longer arms provide better reach and serve angles. Strong legs and core deliver explosive strokes and stability. Agility and fast reaction time allow quick adjustments to unpredictable ball trajectories.',
+        'description': 'Longer arms provide better reach and serve angles. Strong legs and core deliver explosive strokes and stability. Agility and fast reaction time allow quick adjustments to unpredictable ball trajectories.',
         'stats': {
             'strength': 70,
             'agility': 90,
@@ -133,7 +133,7 @@ SPORT_DATABASE = {
     },
     'rowing': {
         'name': 'Rowing',
-        'description': 'Helpful body traits: Long arms and legs allow greater stroke length and leverage. A tall torso improves pulling power on each stroke. High aerobic capacity and muscular endurance are essential for sustained power output.',
+        'description': 'Long arms and legs allow greater stroke length and leverage. A tall torso improves pulling power on each stroke. High aerobic capacity and muscular endurance are essential for sustained power output.',
         'stats': {
             'strength': 85,
             'agility': 65,

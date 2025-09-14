@@ -12,15 +12,16 @@ export interface Athlete {
   name: string;
   sport: string;
   position?: string;
-  height: number; // in cm
-  weight: number; // in kg
-  wingspan: number; // in cm
-  shoulderWidth?: number; // in cm
-  waist?: number; // in cm
-  hip?: number; // in cm
+  height: number | string; // in cm or "Information unavailable"
+  weight: number | string; // in kg or "Information unavailable"
+  wingspan: number | string; // in cm or "Information unavailable"
+  shoulderWidth?: number | string; // in cm or "Information unavailable"
+  waist?: number | string; // in cm or "Information unavailable"
+  hip?: number | string; // in cm or "Information unavailable"
   imageUrl?: string;
   description?: string;
   achievements?: string[];
+  gender_emoji?: string;
 }
 
 export interface SportRecommendation {
