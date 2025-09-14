@@ -325,8 +325,8 @@ def recommend_sport():
             sport_name = get_sport_name(sport_key) if sport_key else 'Unknown Sport'
             
             # Determine gender emoji
-            gender = athlete_data.get('gender', '').lower()
-            gender_emoji = '♂️' if gender == 'male' else '♀️' if gender == 'female' else '⚥'
+            gender = athlete_data.get('gender', athlete_data.get('Sex', '')).lower()
+            gender_emoji = '♂️' if gender in ['male', 'm'] else '♀️' if gender in ['female', 'f'] else '⚥'
             
             # Handle missing measurements
             def format_measurement(value):

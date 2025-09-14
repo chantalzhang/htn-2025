@@ -23,7 +23,13 @@ export default function AthleteCard({ match, index }: AthleteCardProps) {
 
       {/* Athlete Image Placeholder with Gender Emoji */}
       <div className="w-20 h-20 bg-gradient-to-br from-neon-blue/20 to-neon-green/20 rounded-full mx-auto mb-4 flex items-center justify-center">
-        <span className="text-3xl">{athlete.gender_emoji || '⚥'}</span>
+        <span className={`text-3xl ${
+          athlete.gender_emoji === '♂️' ? 'text-blue-500' : 
+          athlete.gender_emoji === '♀️' ? 'text-pink-500' : 
+          'text-gray-400'
+        }`}>
+          {athlete.gender_emoji || '⚥'}
+        </span>
       </div>
 
       {/* Athlete Info */}
