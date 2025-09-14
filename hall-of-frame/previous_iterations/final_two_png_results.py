@@ -66,25 +66,18 @@ def apply_body_type_weighting(df, feature_cols):
     5. Heavy/powerful (weightlifting, wrestling/judo)
     6. Medium build/agile (tennis, sprint running)
     """
-    print("   Applying strategic body type weighting for balanced clusters...")
+    print("   Applying unweighted approach (all features equal importance)...")
 
-    # Strategic body type weights to create distinct archetypes
+    # Unweighted approach - all features have equal importance
     body_type_weights = {
-        # Height differentiation (separates tall vs short sports)
-        'height_cm': 2.5,           # Strong emphasis to separate tall sports
-        
-        # Power vs lean differentiation  
-        'weight_kg': 2.0,           # Separates heavy vs light sports
-        'bmi': 2.8,                 # Strong emphasis on bulk vs lean
-        'weight_height_ratio': 2.5, # Separates stocky vs lean builds
-        
-        # Limb proportions (separates different body types)
-        'arm_span_ratio': 2.2,      # Separates long-armed vs short-armed sports
-        'leg_length_ratio': 1.8,    # Separates long-legged vs short-legged
-        'torso_length_ratio': 2.0,  # Separates long-torso vs short-torso
-        
-        # Height-weight balance
-        'height_weight_ratio': 1.5, # Additional separation of build types
+        'height_cm': 1.0,
+        'weight_kg': 1.0,
+        'bmi': 1.0,
+        'weight_height_ratio': 1.0,
+        'height_weight_ratio': 1.0,
+        'arm_span_ratio': 1.0,
+        'leg_length_ratio': 1.0,
+        'torso_length_ratio': 1.0,
     }
 
     # Copy the entire dataframe to preserve all columns
