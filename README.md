@@ -16,7 +16,9 @@ npm run dev
 Navigate to [http://localhost:3000](http://localhost:3000)
 
 **start flask server**
-```python app.py```
+```python
+python app.py
+```
 
 ## !!!
 camera and upload pic features not integrated yet (so close though), so skip to manual input 
