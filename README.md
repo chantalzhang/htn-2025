@@ -5,7 +5,6 @@ check what sport u would be good at based on ur body measurements
 
 ## scope of possible results
 for now it only has basketball, swimming, gymnastics, track & field (sprint), long distance running (marathon), soccer, volleyball, weightlifting, tennis, rowing.
-how to run: 
 
 ## how to run: 
 **run dev server**
